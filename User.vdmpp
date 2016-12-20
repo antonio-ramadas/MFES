@@ -6,7 +6,10 @@ values
 instance variables
 -- TODO Define instance variables here
 operations
--- TODO Define operations here
+	-- constructor
+	public User: () ==> User
+	User() == return self
+	
 functions
 -- TODO Define functiones here
 traces

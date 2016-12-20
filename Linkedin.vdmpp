@@ -5,13 +5,19 @@ values
 -- TODO Define values here
 instance variables
 	-- users of the social network
-	private users: seq of User := [];
+	private users: set of User := {};
 	
 operations
 	-- constructor
 	public Linkedin: () ==> Linkedin
-	Linkedin() == (return self)
-	post users = [];
+	Linkedin() == return self
+	post users = {};
+	
+	-- add a new user to the social network
+	public addUser: User ==> ()
+	addUser(user) == users := users union {user}
+	pre user not in set users
+	post users = users~ union {user};
 	
 functions
 -- TODO Define functiones here
