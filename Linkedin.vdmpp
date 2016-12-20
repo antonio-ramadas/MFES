@@ -4,9 +4,15 @@ types
 values
 -- TODO Define values here
 instance variables
--- TODO Define instance variables here
+	-- users of the social network
+	private users: seq of User := [];
+	
 operations
--- TODO Define operations here
+	-- constructor
+	public Linkedin: () ==> Linkedin
+	Linkedin() == (return self)
+	post users = [];
+	
 functions
 -- TODO Define functiones here
 traces
