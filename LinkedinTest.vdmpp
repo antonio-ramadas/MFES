@@ -1,0 +1,42 @@
+class LinkedinTest
+types
+-- TODO Define types here
+values
+-- TODO Define values here
+instance variables
+	linkedin: Linkedin := new Linkedin();
+operations
+	private addUser: Linkedin * seq of char ==> ()
+	addUser(sn, name) ==
+		sn.addUser(new User(name));
+		
+	private addUsers: () ==> ()
+	addUsers() ==
+	(
+		linkedin.addUser(new User("antonio"));
+		linkedin.addUser(new User("duarte"));
+		linkedin.addUser(new User("marina"));
+
+		linkedin.addUser(new User("ramadas"));
+		linkedin.addUser(new User("pinto"));
+		linkedin.addUser(new User("camilo"));
+		
+		linkedin.addUser(new User("ardonio"));
+		linkedin.addUser(new User("cc"));
+		linkedin.addUser(new User("coimbras"));
+	);
+		
+	public static main: () ==> ()
+	main() ==
+	(
+		dcl linkedinTest: LinkedinTest := new LinkedinTest();
+		
+		linkedinTest.addUsers();
+		
+		IO`println(linkedinTest.linkedin.searchByName("ant"));
+	);
+functions
+-- TODO Define functiones here
+traces
+-- TODO Define Combinatorial Test Traces here
+end LinkedinTest
