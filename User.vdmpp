@@ -23,13 +23,24 @@ operations
 	-- compares the given name woth the one of the user
 	public similarName: seq of char ==> bool
 	similarName(n) == (
+	dcl index: nat1 := 1;
+	dcl startFound: bool := false;
+	
 	-- if the hint is longer than of the name, then we can anticipate a failure
 	if len n > len name then
 		return false;
+		
+	-- find the start to compare
+	while (not startFound) do (
+		if n(1) = name(index) then
+			startFound := true
+		else
+			index := index + 1;
+	);
 	
 	-- it only compares until the length of n
-	for index = 1 to len n do
-		if n(index) <> name(index) then
+	for index1 = index to len n do
+		if n(index1) <> name(index1) then
 			return false;
 
 	return true)
