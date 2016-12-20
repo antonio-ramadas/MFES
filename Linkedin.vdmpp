@@ -45,7 +45,7 @@ operations
 	);
 	
 	return results)
-	-- TODO missing post condition
+	pre len name > 0;
 	
 functions
 -- TODO Define functiones here

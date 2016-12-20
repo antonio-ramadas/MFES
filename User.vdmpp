@@ -35,6 +35,7 @@ operations
 			return false;
 
 	return true)
+	pre len n > 0;
 	
 functions
 -- TODO Define functiones here
