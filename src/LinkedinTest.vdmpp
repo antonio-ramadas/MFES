@@ -43,7 +43,10 @@ operations
 		IO`println(linkedinTest.linkedin.searchByName("ant"));
 		
 		linkedinTest.linkedin.addConnection(linkedinTest.user1, linkedinTest.user2);
-		IO`println(linkedinTest.linkedin);
+		linkedinTest.linkedin.addConnection(linkedinTest.user1, linkedinTest.user3);
+		linkedinTest.linkedin.addConnection(linkedinTest.user2, linkedinTest.user3);
+
+		IO`println(linkedinTest.linkedin.findConnections(linkedinTest.user1, linkedinTest.user2));
 	);
 functions
 -- TODO Define functiones here
