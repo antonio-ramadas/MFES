@@ -14,11 +14,26 @@ operations
 	User(n) == (name := n; return self)
 	post connections = {} and name = n;
 	
-	--add a new connection on this user
+	-- add a new connection on this user
 	public addConnection: User ==> ()
 	addConnection(c) == connections := connections union {c}
 	pre c <> self and c not in set connections
 	post connections = connections~ union {c};
+	
+	-- compares the given name woth the one of the user
+	public similarName: seq of char ==> bool
+	similarName(n) == (
+	-- if the hint is longer than of the name, then we can anticipate a failure
+	if len n > len name then
+		return false;
+	
+	-- it only compares until the length of n
+	for index = 1 to len n do
+		if n(index) <> name(index) then
+			return false;
+
+	return true)
+	-- TODO enhance comparision
 	
 functions
 -- TODO Define functiones here

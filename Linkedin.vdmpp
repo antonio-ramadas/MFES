@@ -34,6 +34,19 @@ operations
 			user1 not in set user2.connections
 	post user2 in set user1.connections and user1 in set user2.connections;
 	
+	-- returns all users that have a similar name to the given one
+	public searchByName: seq of char ==> set of User
+	searchByName(name) == (
+	dcl results: set of User := {};
+	
+	for all user in set users do (
+		if user.similarName(name) then
+			results := results union {user};
+	);
+	
+	return results)
+	-- TODO missing post condition
+	
 functions
 -- TODO Define functiones here
 traces
