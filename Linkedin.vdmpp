@@ -23,7 +23,16 @@ operations
 	public addNewConnection: User * User ==> ()
 	addNewConnection(user1, user2) ==
 	|| (user1.addConnection(user2), user2.addConnection(user1))
-	pre user1 <> user2 and user1 in set users and user2 in set users;
+	pre
+			-- they are not the same user
+			user1 <> user2 and
+			-- both users exist in the database
+			user1 in set users and
+			user2 in set users and
+			-- there's no connection between them
+			user2 not in set user1.connections and
+			user1 not in set user2.connections
+	post user2 in set user1.connections and user1 in set user2.connections;
 	
 functions
 -- TODO Define functiones here
