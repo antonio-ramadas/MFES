@@ -4,11 +4,20 @@ types
 values
 -- TODO Define values here
 instance variables
--- TODO Define instance variables here
+	-- network of contacts of this user
+	public connections: set of User := {};
+	
 operations
 	-- constructor
 	public User: () ==> User
 	User() == return self
+	post connections = {};
+	
+	--add a new connection on this user
+	public addConnection: User ==> ()
+	addConnection(c) == connections := connections union {c}
+	pre c <> self and c not in set connections
+	post connections = connections~ union {c};
 	
 functions
 -- TODO Define functiones here

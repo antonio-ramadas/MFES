@@ -19,6 +19,11 @@ operations
 	pre user not in set users
 	post users = users~ union {user};
 	
+	public addNewConnection: User * User ==> ()
+	addNewConnection(user1, user2) ==
+	|| (user1.addConnection(user2), user2.addConnection(user1))
+	pre user1 <> user2 and user1 in set users and user2 in set users;
+	
 functions
 -- TODO Define functiones here
 traces
