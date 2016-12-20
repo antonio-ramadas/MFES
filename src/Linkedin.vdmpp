@@ -20,8 +20,8 @@ operations
 	post users = users~ union {user};
 	
 	-- add a new connections between users
-	public addNewConnection: User * User ==> ()
-	addNewConnection(user1, user2) ==
+	public addConnection: User * User ==> ()
+	addConnection(user1, user2) ==
 	|| (user1.addConnection(user2), user2.addConnection(user1))
 	pre
 			-- they are not the same user

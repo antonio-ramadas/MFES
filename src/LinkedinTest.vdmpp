@@ -5,6 +5,15 @@ values
 -- TODO Define values here
 instance variables
 	linkedin: Linkedin := new Linkedin();
+	user1: User := new User("antonio");
+	user2: User := new User("duarte");
+	user3: User := new User("marina");
+	user4: User := new User("ramadas");
+	user5: User := new User("pinto");
+	user6: User := new User("camilo");
+	user7: User := new User("ardonio");
+	user8: User := new User("cc");
+	user9: User := new User("coimbras");
 operations
 	private addUser: Linkedin * seq of char ==> ()
 	addUser(sn, name) ==
@@ -13,17 +22,15 @@ operations
 	private addUsers: () ==> ()
 	addUsers() ==
 	(
-		linkedin.addUser(new User("antonio"));
-		linkedin.addUser(new User("duarte"));
-		linkedin.addUser(new User("marina"));
-
-		linkedin.addUser(new User("ramadas"));
-		linkedin.addUser(new User("pinto"));
-		linkedin.addUser(new User("camilo"));
-		
-		linkedin.addUser(new User("ardonio"));
-		linkedin.addUser(new User("cc"));
-		linkedin.addUser(new User("coimbras"));
+		linkedin.addUser(user1);
+		linkedin.addUser(user2);
+		linkedin.addUser(user3);
+		linkedin.addUser(user4);
+		linkedin.addUser(user5);
+		linkedin.addUser(user6);
+		linkedin.addUser(user7);
+		linkedin.addUser(user8);
+		linkedin.addUser(user9);
 	);
 		
 	public static main: () ==> ()
@@ -34,6 +41,9 @@ operations
 		linkedinTest.addUsers();
 		
 		IO`println(linkedinTest.linkedin.searchByName("ant"));
+		
+		linkedinTest.linkedin.addConnection(linkedinTest.user1, linkedinTest.user2);
+		IO`println(linkedinTest.linkedin);
 	);
 functions
 -- TODO Define functiones here
