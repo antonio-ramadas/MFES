@@ -47,6 +47,8 @@ operations
 		linkedinTest.linkedin.addConnection(linkedinTest.user2, linkedinTest.user3);
 
 		IO`println(linkedinTest.linkedin.findConnections(linkedinTest.user1, linkedinTest.user2));
+		
+		IO`println(linkedinTest.linkedin.mostFamous());
 	);
 functions
 -- TODO Define functiones here

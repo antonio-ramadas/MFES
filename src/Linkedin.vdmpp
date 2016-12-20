@@ -53,6 +53,21 @@ operations
 		return user1.connections inter user2.connections
 	pre user1 <> user2 and user1 in set users and user2 in set users;
 	
+	-- returns the most famous person in the network
+	public mostFamous: () ==> User
+	mostFamous() ==
+	(
+		dcl famous: User := VDMUtil`set2seq[User](users)(1);
+		
+		for all user in set users do
+			if card user.connections > card famous.connections then
+				famous := user;
+		
+		return famous
+	)
+	pre card users > 0
+	post RESULT in set users;
+	
 functions
 -- TODO Define functiones here
 traces
