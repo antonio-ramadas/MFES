@@ -42,6 +42,18 @@ operations
 	return true)
 	pre len n > 0;
 	
+	-- update cv
+	public updateCV: seq of char ==> bool
+	updateCV(text) ==
+		new IO().fecho("cv/" ^ VDMUtil`val2seq_of_char[nat](id) ^ ".txt", text, <start>)
+	pre text <> undefined
+	post RESULT = true;
+	
+	-- delete cv (write nothing to it)
+	public deleteCV: () ==> bool
+		deleteCV() == updateCV("")
+	post RESULT = true;
+	
 functions
 -- TODO Define functiones here
 traces

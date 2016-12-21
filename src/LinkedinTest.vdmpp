@@ -49,6 +49,8 @@ operations
 		IO`println(linkedinTest.linkedin.findConnections(linkedinTest.user1, linkedinTest.user2));
 		
 		IO`println(linkedinTest.linkedin.mostFamous());
+		
+		IO`println(linkedinTest.user1.updateCV("---User1 CV---\nWelcome to my CV!!"));
 	);
 functions
 -- TODO Define functiones here
