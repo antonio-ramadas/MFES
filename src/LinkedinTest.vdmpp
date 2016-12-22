@@ -48,10 +48,46 @@ operations
 
 		IO`println(linkedinTest.linkedin.findConnections(linkedinTest.user1, linkedinTest.user2));
 		
-		IO`println(linkedinTest.linkedin.mostFamous());
+		IO`println(linkedinTest.linkedin.mostFamousUser());
 		
-		linkedinTest.user1.updateCV("---User1 CV---\nWelcome to my CV!!");
+		linkedinTest.user1.updateCV("---User1 CV---Welcome to my CV!!");
 		IO`println(linkedinTest.user1.cv);
+		
+		linkedinTest.linkedin.addGroup("Antonio's Group");
+		linkedinTest.linkedin.addGroup("Duarte's Group");
+		linkedinTest.linkedin.addGroup("Marina's Group");
+		
+		linkedinTest.linkedin.addGroupUser("Antonio's Group", linkedinTest.user1);
+		linkedinTest.linkedin.addGroupUser("Antonio's Group", linkedinTest.user2);
+		linkedinTest.linkedin.addGroupUser("Antonio's Group", linkedinTest.user3);
+		
+		linkedinTest.linkedin.addGroupUser("Duarte's Group", linkedinTest.user1);
+		linkedinTest.linkedin.addGroupUser("Duarte's Group", linkedinTest.user2);
+		linkedinTest.linkedin.addGroupUser("Duarte's Group", linkedinTest.user3);
+		
+		linkedinTest.linkedin.addGroupUser("Marina's Group", linkedinTest.user1);
+		linkedinTest.linkedin.addGroupUser("Marina's Group", linkedinTest.user2);
+		linkedinTest.linkedin.addGroupUser("Marina's Group", linkedinTest.user3);
+		
+		linkedinTest.linkedin.msgGroup("Antonio's Group", linkedinTest.user1, "Hello, World!");
+		linkedinTest.linkedin.msgGroup("Antonio's Group", linkedinTest.user1, "Welcome to my group! :)");
+		linkedinTest.linkedin.msgGroup("Antonio's Group", linkedinTest.user2, "Hi!");
+		linkedinTest.linkedin.msgGroup("Antonio's Group", linkedinTest.user3, "Hello!");
+		
+		linkedinTest.linkedin.msgGroup("Duarte's Group", linkedinTest.user2, "Hello!");
+		linkedinTest.linkedin.msgGroup("Duarte's Group", linkedinTest.user3, "Hi!");
+		
+		linkedinTest.linkedin.msgGroup("Marina's Group", linkedinTest.user3, "Hi!");
+		
+		linkedinTest.linkedin.removeGroupUser("Antonio's Group", linkedinTest.user3);
+		
+		IO`println(linkedinTest.linkedin.mostPopularGroup());
+		
+		IO`println(linkedinTest.linkedin.getGroupNames());
+		
+		IO`println(linkedinTest.linkedin.getGroupInfo("Antonio's Group"));
+		
+		IO`println(VDMUtil`val2seq_of_char[seq of Group`Message](linkedinTest.linkedin.getGroupMsgs("Antonio's Group", linkedinTest.user1)));
 	);
 functions
 -- TODO Define functiones here

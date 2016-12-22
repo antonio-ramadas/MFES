@@ -19,18 +19,18 @@ operations
 	addUser(user) == users := users union {user}
 	pre user not in set users
 	post users = users~ union {user};
+	
+	-- add a new group message
+	public sendMsg: User * Message ==> ()
+	sendMsg(user, msg) == msgs := msgs ^ [msg]
+	pre user in set users
+	post msgs = msgs~ ^ [msg];
 
 	-- remove a user from the group (but not its messages)
 	public removeUser: User ==> ()
 	removeUser(user) == users := users \ {user}
 	pre user in set users
 	post users = users~ \ {user};
-	
-	-- add a new group message
-	public sendMsg: User * Message ==> ()
-	sendMsg(user, msg) == msgs := msgs ^ [msg]
-	pre user in set users
-	post msgs = msgs~ ^ msg;
 	
 	-- check messages from the group (the user must be in the group)
 	public checkMsgs: User ==> seq of Message

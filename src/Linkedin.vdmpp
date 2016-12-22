@@ -40,11 +40,26 @@ operations
 	-- add a new group to the social network (each group name is unique)
 	public addGroup: seq1 of char ==> ()
 	addGroup(name) == groups := groups munion {name |-> new Group()}
-	pre name in set dom groups;
+	pre name not in set dom groups;
+	
+	-- add a user to the group
+	public addGroupUser: seq1 of char * User ==> ()
+	addGroupUser(name, user) == groups(name).addUser(user)
+	pre user in set users and name in set dom groups;
+	
+	-- remove a user from a group
+	public removeGroupUser: seq1 of char * User ==> ()
+	removeGroupUser(name, user) == groups(name).removeUser(user)
+	pre user in set users and name in set dom groups;
 	
 	-- send a message to a group
 	public msgGroup: seq1 of char * User * seq1 of char ==> ()
 	msgGroup(groupName, user, msg) == groups(groupName).sendMsg(user, msg)
+	pre user in set users and groupName in set dom groups;
+	
+	-- get messages from a group
+	public getGroupMsgs: seq1 of char * User ==> seq of Group`Message
+	getGroupMsgs(groupName, user) == return groups(groupName).checkMsgs(user)
 	pre user in set users and groupName in set dom groups;
 	
 	-- returns the most popular group in the social network
@@ -58,7 +73,7 @@ operations
 		
 		return name
 	)
-	post RESULT in set dom groups;
+	post RESULT in set dom groups and card {g | g in set dom groups & len groups(g).msgs > len groups(RESULT).msgs} = 0;
 	
 	-- returns the names of all groups in the social network
 	public getGroupNames: () ==> set of seq1 of char
@@ -71,15 +86,15 @@ operations
 	
 	-- returns all users that have a similar name to the given one
 	public searchByName: seq of char ==> set of User
-	searchByName(name) == (
-	dcl results: set of User := {};
+	searchByName(name) == return {user | user in set users & user.similarName(name)} --(
+	--dcl results: set of User := {};
 	
-	for all user in set users do (
-		if user.similarName(name) then
-			results := results union {user};
-	);
+	--for all user in set users do (
+	--	if user.similarName(name) then
+	--		results := results union {user};
+	--);
 	
-	return results)
+	--return results)
 	pre len name > 0;
 	
 	-- returns commun contacts between two users
@@ -89,8 +104,8 @@ operations
 	pre user1 <> user2 and user1 in set users and user2 in set users;
 	
 	-- returns the most famous person in the network
-	public mostFamous: () ==> User
-	mostFamous() ==
+	public mostFamousUser: () ==> User
+	mostFamousUser() ==
 	(
 		dcl famous: [User] := nil;
 		
@@ -101,7 +116,7 @@ operations
 		return famous
 	)
 	pre card users > 0
-	post RESULT in set users;
+	post RESULT in set users and card {u | u in set users & card u.connections > card RESULT.connections} = 0;
 	
 functions
 -- TODO Define functiones here
