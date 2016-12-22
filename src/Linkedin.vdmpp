@@ -7,6 +7,9 @@ instance variables
 	-- users of the social network
 	private users: set of User := {};
 	
+	--groups of the social network
+	private groups: map seq1 of char to Group := {|->};
+	
 operations
 	-- constructor
 	public Linkedin: () ==> Linkedin
@@ -34,6 +37,38 @@ operations
 			user1 not in set user2.connections
 	post user2 in set user1.connections and user1 in set user2.connections;
 	
+	-- add a new group to the social network (each group name is unique)
+	public addGroup: seq1 of char ==> ()
+	addGroup(name) == groups := groups munion {name |-> new Group()}
+	pre name in set dom groups;
+	
+	-- send a message to a group
+	public msgGroup: seq1 of char * User * seq1 of char ==> ()
+	msgGroup(groupName, user, msg) == groups(groupName).sendMsg(user, msg)
+	pre user in set users and groupName in set dom groups;
+	
+	-- returns the most popular group in the social network
+	public mostPopularGroup: () ==> seq1 of char
+	mostPopularGroup() == (
+		dcl name: [seq1 of char] := nil;
+		
+		for all groupName in set dom groups do
+			if name = nil or len groups(groupName).msgs > len groups(name).msgs then
+				name := groupName;
+		
+		return name
+	)
+	post RESULT in set dom groups;
+	
+	-- returns the names of all groups in the social network
+	public getGroupNames: () ==> set of seq1 of char
+	getGroupNames() == return dom groups;
+	
+	-- returns all the information about a group
+	public getGroupInfo: seq1 of char ==> Group
+	getGroupInfo(name) == return groups(name)
+	pre name in set dom groups;
+	
 	-- returns all users that have a similar name to the given one
 	public searchByName: seq of char ==> set of User
 	searchByName(name) == (
@@ -57,10 +92,10 @@ operations
 	public mostFamous: () ==> User
 	mostFamous() ==
 	(
-		dcl famous: User := VDMUtil`set2seq[User](users)(1);
+		dcl famous: [User] := nil;
 		
 		for all user in set users do
-			if card user.connections > card famous.connections then
+			if famous = nil or card user.connections > card famous.connections then
 				famous := user;
 		
 		return famous
