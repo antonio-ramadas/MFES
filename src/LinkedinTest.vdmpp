@@ -50,7 +50,8 @@ operations
 		
 		IO`println(linkedinTest.linkedin.mostFamous());
 		
-		IO`println(linkedinTest.user1.updateCV("---User1 CV---\nWelcome to my CV!!"));
+		linkedinTest.user1.updateCV("---User1 CV---\nWelcome to my CV!!");
+		IO`println(linkedinTest.user1.cv);
 	);
 functions
 -- TODO Define functiones here

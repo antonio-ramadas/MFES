@@ -6,15 +6,14 @@ values
 instance variables
 	-- network of contacts of this user
 	public connections: set of User := {};
-	public name: seq of char;
-	public id: nat;
-	public static idStatic: nat := 0;
+	public name: seq1 of char;
+	public cv: seq of char := "";
 	
 operations
 	-- constructor
 	public User: seq of char ==> User
 	User(n) == (
-		atomic(name := n; id := idStatic; idStatic := idStatic + 1;);
+		name := n;
 		return self
 	)
 	post connections = {} and name = n;
@@ -43,16 +42,16 @@ operations
 	pre len n > 0;
 	
 	-- update cv
-	public updateCV: seq of char ==> bool
+	public updateCV: seq of char ==> ()
 	updateCV(text) ==
-		new IO().fecho("cv/" ^ VDMUtil`val2seq_of_char[nat](id) ^ ".txt", text, <start>)
+		cv := text
 	pre text <> undefined
-	post RESULT = true;
+	post cv = text;
 	
 	-- delete cv (write nothing to it)
-	public deleteCV: () ==> bool
+	public deleteCV: () ==> ()
 		deleteCV() == updateCV("")
-	post RESULT = true;
+	post cv = "";
 	
 functions
 -- TODO Define functiones here
