@@ -33,7 +33,7 @@ operations
 	post users = users~ \ {user};
 	
 	-- check messages from the group (the user must be in the group)
-	public checkMsgs: User ==> seq of Message
+	public pure checkMsgs: User ==> seq of Message
 	checkMsgs(user) == return msgs
 	pre user in set users;
 	

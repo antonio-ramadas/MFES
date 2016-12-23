@@ -59,12 +59,12 @@ operations
 	pre user in set users and groupName in set dom groups;
 	
 	-- get messages from a group
-	public getGroupMsgs: seq1 of char * User ==> seq of Group`Message
+	public pure getGroupMsgs: seq1 of char * User ==> seq of Group`Message
 	getGroupMsgs(groupName, user) == return groups(groupName).checkMsgs(user)
 	pre user in set users and groupName in set dom groups;
 	
 	-- returns the most popular group in the social network
-	public mostPopularGroup: () ==> seq1 of char
+	public pure mostPopularGroup: () ==> seq1 of char
 	mostPopularGroup() == (
 		dcl name: [seq1 of char] := nil;
 		
@@ -77,16 +77,16 @@ operations
 	post RESULT in set dom groups and card {g | g in set dom groups & len groups(g).msgs > len groups(RESULT).msgs} = 0;
 	
 	-- returns the names of all groups in the social network
-	public getGroupNames: () ==> set of seq1 of char
+	public pure getGroupNames: () ==> set of seq1 of char
 	getGroupNames() == return dom groups;
 	
 	-- returns all the information about a group
-	public getGroupInfo: seq1 of char ==> Group
+	public pure getGroupInfo: seq1 of char ==> Group
 	getGroupInfo(name) == return groups(name)
 	pre name in set dom groups;
 	
 	-- returns all users that have a similar name to the given one
-	public searchByName: seq of char ==> set of User
+	public pure searchByName: seq of char ==> set of User
 	searchByName(name) == return {user | user in set users & user.similarName(name)} --(
 	--dcl results: set of User := {};
 	
@@ -99,13 +99,13 @@ operations
 	pre len name > 0;
 	
 	-- returns commun contacts between two users
-	public findConnections: User * User ==> set of User
+	public pure findConnections: User * User ==> set of User
 	findConnections(user1, user2) ==
 		return user1.connections inter user2.connections
 	pre user1 <> user2 and user1 in set users and user2 in set users;
 	
 	-- returns the most famous person in the network
-	public mostFamousUser: () ==> User
+	public pure mostFamousUser: () ==> User
 	mostFamousUser() ==
 	(
 		dcl famous: [User] := nil;
@@ -121,7 +121,7 @@ operations
 	
 	-- calculates the distance between 2 users (starts looking by the user in the first argument)
 	-- to calculate the minimum distance between users it is used the breadth first search algorithm
-	public distance: User * User ==> nat
+	public pure distance: User * User ==> nat
 	distance(user1, user2) == (
 		dcl search: set of User := user1.connections;
 		dcl searchTemp: set of User := search;
@@ -154,7 +154,7 @@ operations
 	pre user1 in set users and user2 in set users;
 	
 	-- calculates the average user distance in the network
-	public averageUserDistance: () ==> real
+	public pure averageUserDistance: () ==> real
 	averageUserDistance() == (
 		dcl sum: real := 0;
 		dcl subSearch: set of User := users;

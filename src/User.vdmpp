@@ -25,7 +25,7 @@ operations
 	post connections = connections~ union {c};
 	
 	-- compares the given name woth the one of the user
-	public similarName: seq of char ==> bool
+	public pure similarName: seq of char ==> bool
 	similarName(n) == (
 		dcl nameS: seq of char := name;
 		dcl found: bool := false;

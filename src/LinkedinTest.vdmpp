@@ -260,7 +260,10 @@ operations
 		linkedin.addGroupUser("Antonio's Group", user1);
 		
 		linkedin.msgGroup("Antonio's Group", user1, "Hello, World!");
-		assertEqual(["Hello, World!"], linkedin.groups("Antonio's Group").msgs);
+		assertEqual(["Hello, World!"], linkedin.getGroupMsgs("Antonio's Group", user1));
+		
+		-- this test is suppose to fail (the user does not have access to the group)
+		/*linkedin.getGroupMsgs("Antonio's Group", user2);*/
 		
 		-- this test is suppose to fail (the user is not in the group)
 		/*linkedin.msgGroup("Antonio's Group", user2, "Dummy Message!");*/
