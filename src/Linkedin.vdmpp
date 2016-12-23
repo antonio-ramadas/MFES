@@ -145,12 +145,29 @@ operations
 				searchTemp := search
 		);
 		
+		-- if the two users are not reachable then it is returned INFINITY
 		if user2 not in set search then
 			return INFINITY
 		else
 			return counter
 	)
 	pre user1 in set users and user2 in set users;
+	
+	-- calculates the average user distance in the network
+	public averageUserDistance: () ==> real
+	averageUserDistance() == (
+		dcl avg: real := 0;
+		dcl subSearch: set of User := users;
+		
+		for all user1 in set users do (
+			subSearch := subSearch \ {user1};
+			for all user2 in set subSearch do
+				avg := avg + distance(user1, user2);
+		);
+		
+		return avg / card users;
+	)
+	post RESULT >= 0;
 	
 	-- remove repetitions from a sequence of any type
 	private removeRepetitions: seq of ? ==> seq of ?
