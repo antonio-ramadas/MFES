@@ -129,7 +129,7 @@ operations
 		if user1 = user2 then
 			return 0;
 		
-		while user2 not in set elems search and len search < card users do (
+		while user2 not in set elems search do (
 			counter := counter + 1;
 			
 			for user in search do
@@ -137,6 +137,7 @@ operations
 			
 			search := removeRepetitions(search);
 			
+			-- to prevent an infinite loop
 			if len searchTemp = len search then
 				return INFINITY
 			else

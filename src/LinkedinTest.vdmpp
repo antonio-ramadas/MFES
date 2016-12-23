@@ -89,7 +89,7 @@ operations
 		
 		IO`println(VDMUtil`val2seq_of_char[seq of Group`Message](linkedinTest.linkedin.getGroupMsgs("Antonio's Group", linkedinTest.user1)));
 		
-		IO`println(linkedinTest.linkedin.distance(linkedinTest.user4, linkedinTest.user2));
+		IO`println(linkedinTest.linkedin.distance(linkedinTest.user1, linkedinTest.user2));
 	);
 functions
 -- TODO Define functiones here
