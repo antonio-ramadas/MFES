@@ -2,7 +2,8 @@ class Linkedin
 types
 -- TODO Define types here
 values
--- TODO Define values here
+	private INFINITY: nat1 = 9999;
+
 instance variables
 	-- users of the social network
 	private users: set of User := {};
@@ -117,6 +118,49 @@ operations
 	)
 	pre card users > 0
 	post RESULT in set users and card {u | u in set users & card u.connections > card RESULT.connections} = 0;
+	
+	-- calculates the distance between 2 users (starts looking by the user in the first argument)
+	public distance: User * User ==> nat
+	distance(user1, user2) == (
+		dcl search: seq of User := VDMUtil`set2seq[User](user1.connections);
+		dcl searchTemp: seq of User := search;
+		dcl counter: nat1 := 1;
+
+		if user1 = user2 then
+			return 0;
+		
+		while user2 not in set elems search and len search < card users do (
+			counter := counter + 1;
+			
+			for user in search do
+				search := search ^ VDMUtil`set2seq[User](user.connections);
+			
+			search := removeRepetitions(search);
+			
+			if len searchTemp = len search then
+				return INFINITY
+			else
+				searchTemp := search
+		);
+		
+		if user2 not in set elems search then
+			return INFINITY
+		else
+			return counter
+	)
+	pre user1 in set users and user2 in set users;
+	
+	-- remove repetitions from a sequence of any type
+	private removeRepetitions: seq of ? ==> seq of ?
+	removeRepetitions(repSeq) == (
+		dcl noRepSeq: seq of ? := [];
+		
+		for user in repSeq do 
+			if (user not in set elems noRepSeq) then
+				noRepSeq := noRepSeq ^ [user];
+
+		return noRepSeq;
+	);
 	
 functions
 -- TODO Define functiones here
