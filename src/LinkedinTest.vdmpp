@@ -23,21 +23,65 @@ operations
 	(
 		dcl linkedinTest: LinkedinTest := new LinkedinTest();
 		
+		IO`print("testAddUsers -> ");
 		linkedinTest.testAddUsers();
+		IO`println("Success");
+		
+		IO`print("testUserSearch -> ");
 		linkedinTest.testUserSearch();
+		IO`println("Success");
+		
+		IO`print("testUserConnections -> ");
 		linkedinTest.testUserConnections();
+		IO`println("Success");
+		
+		IO`print("testSearchConnections -> ");
 		linkedinTest.testSearchConnections();
+		IO`println("Success");
+		
+		IO`print("testMostPopularUser -> ");
 		linkedinTest.testMostPopularUser();
+		IO`println("Success");
+		
+		IO`print("testUserCv -> ");
 		linkedinTest.testUserCv();
+		IO`println("Success");
+		
+		IO`print("testAddGroups -> ");
 		linkedinTest.testAddGroups();
+		IO`println("Success");
+		
+		IO`print("testAddGroupUsers -> ");
 		linkedinTest.testAddGroupUsers();
+		IO`println("Success");
+		
+		IO`print("testRemoveGroupUsers -> ");
 		linkedinTest.testRemoveGroupUsers();
+		IO`println("Success");
+		
+		IO`print("testMsgGroup -> ");
 		linkedinTest.testMsgGroup();
+		IO`println("Success");
+		
+		IO`print("testPopularGroup -> ");
 		linkedinTest.testPopularGroup();
+		IO`println("Success");
+		
+		IO`print("testGroupNames -> ");
 		linkedinTest.testGroupNames();
+		IO`println("Success");
+		
+		IO`print("testGroupInfo -> ");
 		linkedinTest.testGroupInfo();
+		IO`println("Success");
+		
+		IO`print("testUsersDistance -> ");
 		linkedinTest.testUsersDistance();
+		IO`println("Success");
+		
+		IO`print("testUsersAvgDistance -> ");
 		linkedinTest.testUsersAvgDistance();
+		IO`println("Success");
 	);
 	
 	-- test if the registration of users in the social network is working correctly

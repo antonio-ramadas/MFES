@@ -156,16 +156,16 @@ operations
 	-- calculates the average user distance in the network
 	public averageUserDistance: () ==> real
 	averageUserDistance() == (
-		dcl avg: real := 0;
+		dcl sum: real := 0;
 		dcl subSearch: set of User := users;
 		
 		for all user1 in set users do (
 			subSearch := subSearch \ {user1};
 			for all user2 in set subSearch do
-				avg := avg + distance(user1, user2);
+				sum := sum + distance(user1, user2);
 		);
 		
-		return avg / card users;
+		return sum / card users;
 	)
 	pre card users > 0
 	post RESULT >= 0;
