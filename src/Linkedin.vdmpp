@@ -167,6 +167,7 @@ operations
 		
 		return avg / card users;
 	)
+	pre card users > 0
 	post RESULT >= 0;
 	
 	-- remove repetitions from a sequence of any type

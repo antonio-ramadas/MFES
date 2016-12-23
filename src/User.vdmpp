@@ -25,20 +25,30 @@ operations
 	post connections = connections~ union {c};
 	
 	-- compares the given name woth the one of the user
-	-- TODO enhance comparision
 	public similarName: seq of char ==> bool
 	similarName(n) == (
+		dcl nameS: seq of char := name;
+		dcl found: bool := false;
+		
+		while len nameS >= len n and not found do (
+			found := true;
 	
-	-- if the hint is longer than of the name, then we can anticipate a failure
-	if len n > len name then
+			-- it only compares until the length of n
+			for index = 1 to len n do
+				if found and n(index) <> nameS(index) then (
+					found := false;
+				);
+			
+			if found then
+				return true
+			else (
+				nameS := tl nameS;
+				found := false;
+			);
+		);
+			
 		return false;
-	
-	-- it only compares until the length of n
-	for index = 1 to len n do
-		if n(index) <> name(index) then
-			return false;
-
-	return true)
+	)
 	pre len n > 0;
 	
 	-- update cv
