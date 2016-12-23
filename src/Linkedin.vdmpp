@@ -120,31 +120,32 @@ operations
 	post RESULT in set users and card {u | u in set users & card u.connections > card RESULT.connections} = 0;
 	
 	-- calculates the distance between 2 users (starts looking by the user in the first argument)
+	-- to calculate the minimum distance between users it is used the breadth first search algorithm
 	public distance: User * User ==> nat
 	distance(user1, user2) == (
-		dcl search: seq of User := VDMUtil`set2seq[User](user1.connections);
-		dcl searchTemp: seq of User := search;
+		dcl search: set of User := user1.connections;
+		dcl searchTemp: set of User := search;
 		dcl counter: nat1 := 1;
 
 		if user1 = user2 then
 			return 0;
 		
-		while user2 not in set elems search do (
+		-- while user2 is not in the search results
+		while user2 not in set search do (
 			counter := counter + 1;
 			
-			for user in search do
-				search := search ^ VDMUtil`set2seq[User](user.connections);
-			
-			search := removeRepetitions(search);
+			-- add to the search set the connections of the current users (add to the search the next level of the tree)
+			for all user in set search do
+				search := search union user.connections;
 			
 			-- to prevent an infinite loop
-			if len searchTemp = len search then
+			if card searchTemp = card search then
 				return INFINITY
 			else
 				searchTemp := search
 		);
 		
-		if user2 not in set elems search then
+		if user2 not in set search then
 			return INFINITY
 		else
 			return counter
