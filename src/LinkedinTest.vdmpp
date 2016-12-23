@@ -1,4 +1,4 @@
-class LinkedinTest
+class LinkedinTest is subclass of MyTestCase
 types
 -- TODO Define types here
 values
@@ -15,13 +15,330 @@ instance variables
 	user8: User := new User("cc");
 	user9: User := new User("coimbras");
 operations
-	private addUser: Linkedin * seq of char ==> ()
-	addUser(sn, name) ==
-		sn.addUser(new User(name));
-		
-	private addUsers: () ==> ()
-	addUsers() ==
+	-- this function asserts if everything is working as it should
+	-- uncomment tests supposed to fail to check if pre and post conditions are working
+	--as they should (the test are between multiline comments (/* */) 
+	public static main: () ==> ()
+	main() ==
 	(
+		dcl linkedinTest: LinkedinTest := new LinkedinTest();
+		
+		linkedinTest.testAddUsers();
+		linkedinTest.testUserSearch();
+		linkedinTest.testUserConnections();
+		linkedinTest.testSearchConnections();
+		linkedinTest.testMostPopularUser();
+		linkedinTest.testUserCv();
+		linkedinTest.testAddGroups();
+		linkedinTest.testAddGroupUsers();
+		linkedinTest.testRemoveGroupUsers();
+		linkedinTest.testMsgGroup();
+		linkedinTest.testPopularGroup();
+		linkedinTest.testGroupNames();
+		linkedinTest.testGroupInfo();
+		linkedinTest.testUsersDistance();
+		linkedinTest.testUsersAvgDistance();
+	);
+	
+	-- test if the registration of users in the social network is working correctly
+	private testAddUsers: () ==> ()
+	testAddUsers() == (
+		linkedin := new Linkedin();
+		
+		createAndAddUsers();
+		
+		assertEqual(9, card linkedin.users);
+		
+		assertEqual({user1,	user2, user3,	user4, user5,	user6, user7,	user8, user9}, linkedin.users);
+		
+		-- this test is supposed to fail (the same user cannot register twice in the network)
+		/**linkedin.addUser(user1);**/
+	);
+	
+	-- test user search by their name
+	private testUserSearch: () ==> ()
+	testUserSearch() == (
+		linkedin := new Linkedin();
+		
+		createAndAddUsers();
+		
+		-- there is not a user whose name match this search
+		assertEqual({}, linkedin.searchByName("null user"));
+		
+		-- match at the beginning of the name
+		assertEqual({user1}, linkedin.searchByName("ant"));
+		
+		-- match at the end of the name
+		assertEqual({user2}, linkedin.searchByName("te"));
+		
+		-- multiple results
+		assertEqual({user1, user7}, linkedin.searchByName("onio"));
+	);
+	
+	-- test the creation of connections between users
+	private testUserConnections: () ==> ()
+	testUserConnections() == (
+		dcl dummyUser: User := new User("dummy user");
+		
+		linkedin := new Linkedin();
+		
+		createAndAddUsers();
+
+		-- add a new connection between users
+		linkedin.addConnection(user1, user2);
+		assertEqual({user2}, user1.connections);
+		assertEqual({user1}, user2.connections);
+		
+		-- this is suppose to fail (cannot add a connection between an user in the network and one that is not)
+		/*linkedin.addConnection(dummyUser, user2);*/
+	);
+	
+	-- test the search of commun connections between users
+	private testSearchConnections: () ==> ()
+	testSearchConnections() == (
+		dcl dummyUser: User := new User("dummy user");
+		
+		linkedin := new Linkedin();
+		
+		createAndAddUsers();	
+		
+		-- the first 3 users connect to each other
+		linkedin.addConnection(user1, user2);
+		linkedin.addConnection(user1, user3);
+		linkedin.addConnection(user2, user3);
+
+		-- the commun connection is only 1 user
+		assertEqual({user3}, linkedin.findConnections(user1, user2));
+		
+		-- this assert is suppose to fail (dummyUser is not in the network)
+		/*assertEqual({}, linkedin.findConnections(dummyUser, user2));*/
+	);
+	
+	-- test the search for the most famous user
+	private testMostPopularUser: () ==> ()
+	testMostPopularUser() == (
+		dcl dummyUser: User := new User("dummy user");
+		
+		linkedin := new Linkedin();
+		
+		createAndAddUsers();
+	
+		linkedin.addConnection(user1, user2);
+		linkedin.addConnection(user1, user3);
+		linkedin.addConnection(user2, user3);
+		linkedin.addConnection(user1, user4);
+		
+		assertEqual(user1, linkedin.mostFamousUser());
+	);
+	
+	-- test the manipulation of users' cv
+	private testUserCv: () ==> ()
+	testUserCv() == (
+		linkedin := new Linkedin();
+		
+		createAndAddUsers();
+		
+		user1.updateCV("---User1 CV---Welcome to my CV!!");
+		assertEqual("---User1 CV---Welcome to my CV!!", user1.cv);
+		
+		user1.deleteCV();
+		assertEqual("", user1.cv);
+	);
+	
+	-- test the creation of groups
+	private testAddGroups: () ==> ()
+	testAddGroups() == (
+		linkedin := new Linkedin();
+		
+		createAndAddUsers();
+		
+		linkedin.addGroup("Antonio's Group");
+		assertEqual(1, card dom linkedin.groups);
+
+		-- this test is suppose to fail (cannot be two groups with the same name)
+		/*linkedin.addGroup("Antonio's Group");*/
+	);
+	
+	-- test the registration of users in groups
+	private testAddGroupUsers: () ==> ()
+	testAddGroupUsers() == (
+		dcl dummyUser: User := new User("dummy user");
+		
+		linkedin := new Linkedin();
+		
+		createAndAddUsers();
+		
+		linkedin.addGroup("Antonio's Group");
+		
+		linkedin.addGroupUser("Antonio's Group", user1);
+		linkedin.addGroupUser("Antonio's Group", user2);
+		linkedin.addGroupUser("Antonio's Group", user3);
+		
+		assertEqual({user1, user2, user3}, linkedin.groups("Antonio's Group").users);
+		
+		-- this test is suppose to fail (the user is not in the network)
+		/*linkedin.addGroupUser("Antonio's Group", dummyUser);*/
+		
+		-- this test is suppose to fail (the group does not exist)
+		/*linkedin.addGroupUser("Dummy's Group", user1);*/
+	);
+	
+	-- test the removal of users from groups
+	private testRemoveGroupUsers: () ==> ()
+	testRemoveGroupUsers() == (
+		linkedin := new Linkedin();
+		
+		createAndAddUsers();
+		
+		linkedin.addGroup("Antonio's Group");
+		
+		linkedin.addGroupUser("Antonio's Group", user1);
+		
+		linkedin.removeGroupUser("Antonio's Group", user1);
+		assertEqual({}, linkedin.groups("Antonio's Group").users);
+		
+		-- this test is suppose to fail (cannot remove a user that is not in the group)
+		/*linkedin.removeGroupUser("Antonio's Group", user2);*/
+		
+		-- this test is suppose to fail (cannot remove a user from a group that does not exist)
+		/*linkedin.removeGroupUser("Dummy's Group", user1);*/
+	);
+	
+	-- test messaging the group
+	private testMsgGroup: () ==> ()
+	testMsgGroup() == (
+		linkedin := new Linkedin();
+		
+		createAndAddUsers();
+		
+		linkedin.addGroup("Antonio's Group");
+		
+		linkedin.addGroupUser("Antonio's Group", user1);
+		
+		linkedin.msgGroup("Antonio's Group", user1, "Hello, World!");
+		assertEqual(["Hello, World!"], linkedin.groups("Antonio's Group").msgs);
+		
+		-- this test is suppose to fail (the user is not in the group)
+		/*linkedin.msgGroup("Antonio's Group", user2, "Dummy Message!");*/
+		
+		-- this test is suppose to fail (there is no such group)
+		/*linkedin.msgGroup("Dummy's Group", user1, "Dummy Message!");*/
+	);
+	
+	-- test the search for the group with more registrated users
+	private testPopularGroup: () ==> ()
+	testPopularGroup() == (
+		linkedin := new Linkedin();
+		
+		createAndAddUsers();
+		
+		linkedin.addGroup("Antonio's Group");
+		linkedin.addGroup("Duarte's Group");
+		linkedin.addGroup("Marina's Group");
+		
+		linkedin.addGroupUser("Antonio's Group", user1);
+		linkedin.addGroupUser("Antonio's Group", user2);
+		linkedin.addGroupUser("Antonio's Group", user3);
+		
+		linkedin.addGroupUser("Duarte's Group", user1);
+		linkedin.addGroupUser("Duarte's Group", user2);
+		
+		linkedin.addGroupUser("Marina's Group", user1);
+		
+		assertEqual("Antonio's Group", linkedin.mostPopularGroup());
+	);
+	
+	-- test to check if all the groups' name is returned
+	private testGroupNames: () ==> ()
+	testGroupNames() == (
+		linkedin := new Linkedin();
+		
+		createAndAddUsers();
+		
+		linkedin.addGroup("Antonio's Group");
+		linkedin.addGroup("Duarte's Group");
+		linkedin.addGroup("Marina's Group");
+		
+		assertEqual({"Antonio's Group", "Duarte's Group", "Marina's Group"}, linkedin.getGroupNames());
+	);
+	
+	-- test if the returned information of a given group is correct
+	private testGroupInfo: () ==> ()
+	testGroupInfo() == (
+		linkedin := new Linkedin();
+		
+		createAndAddUsers();
+		
+		linkedin.addGroup("Antonio's Group");
+		
+		assertEqual(linkedin.groups("Antonio's Group"), linkedin.getGroupInfo("Antonio's Group"));
+		
+		-- this test is supposed to fail (there is not such group)
+		/*linkedin.getGroupInfo("Dummy's Group");*/
+	);
+	
+	-- test the distance between users
+	private testUsersDistance: () ==> ()
+	testUsersDistance() == (
+		dcl dummyUser: User := new User("dummy user");
+		
+		linkedin := new Linkedin();
+		
+		createAndAddUsers();
+	
+		linkedin.addConnection(user1, user2);
+		linkedin.addConnection(user1, user3);
+		
+		-- the distance to the user itself is zero
+		assertEqual(0, linkedin.distance(user1, user1));
+		
+		-- the distance between two users connected is 1
+		assertEqual(1, linkedin.distance(user1, user2));
+		
+		-- the distance between users is bilateral
+		assertEqual(linkedin.distance(user2, user1), linkedin.distance(user1, user2));
+		
+		-- the users are not directly connected
+		assertEqual(2, linkedin.distance(user2, user3));
+		
+		-- the users are not connected
+		assertEqual(Linkedin`INFINITY, linkedin.distance(user5, user6));
+		
+		-- this test is supposed to fail (dummyUser is not in the network)
+		/*assertEqual("ERROR", linkedin.distance(dummyUser, user3));*/
+	);
+	
+	-- test to check if it is made the correct average of the distance between users
+	private testUsersAvgDistance: () ==> ()
+	testUsersAvgDistance() == (
+		linkedin := new Linkedin();
+		
+		user1 := new User("antonio");
+		user2 := new User("duarte");
+		user3 := new User("marina");
+		linkedin.addUser(user1);
+		linkedin.addUser(user2);
+		linkedin.addUser(user3);
+		
+		linkedin.addConnection(user1, user2);
+		linkedin.addConnection(user1, user3);
+		linkedin.addConnection(user2, user3);
+		
+		assertEqual(1, linkedin.averageUserDistance());
+	);
+	
+	private createAndAddUsers: () ==> ()
+	createAndAddUsers() ==	(
+		user1 := new User("antonio");
+		user2 := new User("duarte");
+		user3 := new User("marina");
+		user4 := new User("ramadas");
+		user5 := new User("pinto");
+		user6 := new User("camilo");
+		user7 := new User("ardonio");
+		user8 := new User("cc");
+		user9 := new User("coimbras");
+	
 		linkedin.addUser(user1);
 		linkedin.addUser(user2);
 		linkedin.addUser(user3);
@@ -31,67 +348,6 @@ operations
 		linkedin.addUser(user7);
 		linkedin.addUser(user8);
 		linkedin.addUser(user9);
-	);
-		
-	public static main: () ==> ()
-	main() ==
-	(
-		dcl linkedinTest: LinkedinTest := new LinkedinTest();
-		
-		linkedinTest.addUsers();
-		
-		IO`println(linkedinTest.linkedin.searchByName("ant"));
-		
-		linkedinTest.linkedin.addConnection(linkedinTest.user1, linkedinTest.user2);
-		linkedinTest.linkedin.addConnection(linkedinTest.user1, linkedinTest.user3);
-		--linkedinTest.linkedin.addConnection(linkedinTest.user2, linkedinTest.user3);
-
-		IO`println(linkedinTest.linkedin.findConnections(linkedinTest.user1, linkedinTest.user2));
-		
-		IO`println(linkedinTest.linkedin.mostFamousUser());
-		
-		linkedinTest.user1.updateCV("---User1 CV---Welcome to my CV!!");
-		IO`println(linkedinTest.user1.cv);
-		
-		linkedinTest.linkedin.addGroup("Antonio's Group");
-		linkedinTest.linkedin.addGroup("Duarte's Group");
-		linkedinTest.linkedin.addGroup("Marina's Group");
-		
-		linkedinTest.linkedin.addGroupUser("Antonio's Group", linkedinTest.user1);
-		linkedinTest.linkedin.addGroupUser("Antonio's Group", linkedinTest.user2);
-		linkedinTest.linkedin.addGroupUser("Antonio's Group", linkedinTest.user3);
-		
-		linkedinTest.linkedin.addGroupUser("Duarte's Group", linkedinTest.user1);
-		linkedinTest.linkedin.addGroupUser("Duarte's Group", linkedinTest.user2);
-		linkedinTest.linkedin.addGroupUser("Duarte's Group", linkedinTest.user3);
-		
-		linkedinTest.linkedin.addGroupUser("Marina's Group", linkedinTest.user1);
-		linkedinTest.linkedin.addGroupUser("Marina's Group", linkedinTest.user2);
-		linkedinTest.linkedin.addGroupUser("Marina's Group", linkedinTest.user3);
-		
-		linkedinTest.linkedin.msgGroup("Antonio's Group", linkedinTest.user1, "Hello, World!");
-		linkedinTest.linkedin.msgGroup("Antonio's Group", linkedinTest.user1, "Welcome to my group! :)");
-		linkedinTest.linkedin.msgGroup("Antonio's Group", linkedinTest.user2, "Hi!");
-		linkedinTest.linkedin.msgGroup("Antonio's Group", linkedinTest.user3, "Hello!");
-		
-		linkedinTest.linkedin.msgGroup("Duarte's Group", linkedinTest.user2, "Hello!");
-		linkedinTest.linkedin.msgGroup("Duarte's Group", linkedinTest.user3, "Hi!");
-		
-		linkedinTest.linkedin.msgGroup("Marina's Group", linkedinTest.user3, "Hi!");
-		
-		linkedinTest.linkedin.removeGroupUser("Antonio's Group", linkedinTest.user3);
-		
-		IO`println(linkedinTest.linkedin.mostPopularGroup());
-		
-		IO`println(linkedinTest.linkedin.getGroupNames());
-		
-		IO`println(linkedinTest.linkedin.getGroupInfo("Antonio's Group"));
-		
-		IO`println(VDMUtil`val2seq_of_char[seq of Group`Message](linkedinTest.linkedin.getGroupMsgs("Antonio's Group", linkedinTest.user1)));
-		
-		IO`println(linkedinTest.linkedin.distance(linkedinTest.user3, linkedinTest.user2));
-		
-		IO`println(linkedinTest.linkedin.averageUserDistance());
 	);
 functions
 -- TODO Define functiones here

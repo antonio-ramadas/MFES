@@ -2,14 +2,14 @@ class Linkedin
 types
 -- TODO Define types here
 values
-	private INFINITY: nat1 = 9999;
+	public INFINITY: nat1 = 9999;
 
 instance variables
 	-- users of the social network
-	private users: set of User := {};
+	public users: set of User := {};
 	
 	--groups of the social network
-	private groups: map seq1 of char to Group := {|->};
+	public groups: map seq1 of char to Group := {|->};
 	
 operations
 	-- constructor
@@ -169,18 +169,6 @@ operations
 	)
 	pre card users > 0
 	post RESULT >= 0;
-	
-	-- remove repetitions from a sequence of any type
-	private removeRepetitions: seq of ? ==> seq of ?
-	removeRepetitions(repSeq) == (
-		dcl noRepSeq: seq of ? := [];
-		
-		for user in repSeq do 
-			if (user not in set elems noRepSeq) then
-				noRepSeq := noRepSeq ^ [user];
-
-		return noRepSeq;
-	);
 	
 functions
 -- TODO Define functiones here
