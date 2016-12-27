@@ -170,6 +170,19 @@ operations
 	pre card users > 0
 	post RESULT >= 0;
 	
+	-- calculates the average distance from a user in the network to all others
+	public pure averageDistanceToOthers: User ==> real
+	averageDistanceToOthers(user1) == (
+		dcl sum: real := 0;
+		
+		for all user2 in set users do
+				sum := sum + distance(user1, user2);
+		
+		return sum / (card users - 1);
+	)
+	pre card users > 1 and user1 in set users
+	post RESULT >= 0;
+	
 functions
 -- TODO Define functiones here
 traces

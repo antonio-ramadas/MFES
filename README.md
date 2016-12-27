@@ -7,6 +7,7 @@ This project, which has been developed in VDM++, tries to partially emulate the 
     - Add connections between users
     - Get commun connections between users
     - Get the distance between two users
+    - Get average distance from a user to all others
     - Get average distance of all users
     - Get famous user (most connections)
     - Search by name

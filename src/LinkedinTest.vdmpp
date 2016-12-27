@@ -82,6 +82,8 @@ operations
 		IO`print("testUsersAvgDistance -> ");
 		linkedinTest.testUsersAvgDistance();
 		IO`println("Success");
+		
+		linkedinTest.testUserAvgDistance();
 	);
 	
 	-- test if the registration of users in the social network is working correctly
@@ -372,6 +374,29 @@ operations
 		linkedin.addConnection(user2, user3);
 		
 		assertEqual(1, linkedin.averageUserDistance());
+	);
+	
+	-- test to check if it is made the correct average of the distance between an user to all users
+	private testUserAvgDistance: () ==> ()
+	testUserAvgDistance() == (
+		dcl dummyUser: User := new User("dummy user");
+		
+		linkedin := new Linkedin();
+		
+		user1 := new User("antonio");
+		user2 := new User("duarte");
+		user3 := new User("marina");
+		linkedin.addUser(user1);
+		linkedin.addUser(user2);
+		linkedin.addUser(user3);
+		
+		linkedin.addConnection(user1, user2);
+		linkedin.addConnection(user1, user3);
+		
+		assertEqual(1.5, linkedin.averageDistanceToOthers(user3));
+		
+		-- this test is supposed to fail (dummyUser is not in the network)
+		/*linkedin.averageDistanceToOthers(dummyUser));*/
 	);
 	
 	private createAndAddUsers: () ==> ()
