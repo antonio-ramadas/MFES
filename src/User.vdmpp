@@ -1,6 +1,7 @@
 class User
 types
--- TODO Define types here
+	-- simulates a pair
+	Pair:: key: nat1 value: User;
 values
 -- TODO Define values here
 instance variables
@@ -64,36 +65,55 @@ operations
 	post cv = "";
 	
 	-- returns all users that have a similar name to the given one ordered by a rank (distance from the user)
+	-- it is guaranteed by the post condition that there are no repetitions
 	public userSearchByName: seq of char ==> seq of User
 	userSearchByName(name) == (
+		-- the pair's key is the score and the value is the user		
+		dcl sortedSearch: seq of Pair := rankAndSort(Linkedin`getInstance().searchByName(name) \ {self});
 		dcl result: seq of User := [];
-		dcl result_temp: seq of User := [];
+
+		for pair in sortedSearch do
+			result := result ^ [pair.value];
+
+		return result
+	)
+	pre self in set Linkedin`getInstance().users and len name > 0
+	post card {user | user in seq RESULT & user in set Linkedin`getInstance().users} = len RESULT;
+	
+	-- rank a search by the distance (the first element is a better match than the last one)
+	private rankAndSort: set of User ==> seq of Pair
+	rankAndSort(search) == (
+		-- the pair's key is the score and the value is the user
+		dcl sortedSearch: seq of Pair := [];
+		dcl sortedSearch_temp: seq of Pair := [];
 		dcl inserted: bool := false;
-		-- get all the matches
-		dcl matches: set of User := Linkedin`getInstance().searchByName(name) \ {self};
+		dcl distance: nat1;
 		
 		-- for each match...
-		for all user2 in set matches do (
+		for all match in set search do (
 			inserted := false;
-			result_temp := [];
+			distance := Linkedin`getInstance().distance(self, match);
+			sortedSearch_temp := [];
+			
 			-- ...insert in the correct place
-			for user in result do (
-				if not inserted and Linkedin`getInstance().distance(self, user) < Linkedin`getInstance().distance(self, user2) then (
+			for pair in sortedSearch do (
+				if not inserted and distance < pair.key then (
 					inserted := true;
-					result_temp := result_temp ^ [user2];
+					sortedSearch_temp := sortedSearch_temp ^ [mk_Pair(distance, match)];
 				);
-				result_temp := result_temp ^ [user];
+				sortedSearch_temp := sortedSearch_temp ^ [pair];
 			);
 
 			-- if it is the most distant user then it was not inserted before
 			if not inserted then
-				result_temp := result_temp ^ [user2];
+				sortedSearch_temp := sortedSearch_temp ^ [mk_Pair(distance, match)];
 				
-			result := result_temp;
+			sortedSearch := sortedSearch_temp;
 		);
-		return result
+		
+		return sortedSearch
 	)
-	pre self in set Linkedin`getInstance().users and len name > 0;
+	pre card {user | user in set search & user in set Linkedin`getInstance().users and user <> self} = card search;
 	
 	-- send a message to a group
 	public msgGroup: seq1 of char * seq1 of char ==> ()

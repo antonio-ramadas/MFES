@@ -108,7 +108,7 @@ operations
 		createAndAddUsers();
 		
 		-- there is not a user whose name match this search
-		assertEqual({}, linkedin.searchByName("null user"));
+		assertEqual({}, linkedin.searchByName("nil user"));
 		
 		-- match at the beginning of the name
 		assertEqual({user1}, linkedin.searchByName("ant"));
@@ -118,6 +118,18 @@ operations
 		
 		-- multiple results
 		assertEqual({user1, user7}, linkedin.searchByName("onio"));
+
+		-- the first 3 users connect to each other
+		linkedin.addConnection(user1, user2);
+		linkedin.addConnection(user1, user3);
+		linkedin.addConnection(user2, user3);
+		-- 3 is connected with 4, 4 with 7 and 7 with 6
+		linkedin.addConnection(user3, user4);
+		linkedin.addConnection(user4, user7);
+		linkedin.addConnection(user7, user6);
+		
+		-- the search is sorted according to the distance of the user
+		assertEqual([user2, user3, user4, user7, user6, user9], user1.userSearchByName("a"));
 	);
 	
 	-- test the creation of connections between users
