@@ -11,12 +11,26 @@ instance variables
 	--groups of the social network
 	public groups: map seq1 of char to Group := {|->};
 	
+	private static linkedin: Linkedin := new Linkedin();
+	
 operations
 	-- constructor
-	public Linkedin: () ==> Linkedin
+	private Linkedin: () ==> Linkedin
 	Linkedin() == return self
 	post users = {};
 	
+	-- singleton - return the existent instance
+	public pure static getInstance: () ==> Linkedin
+	getInstance() == return linkedin;
+	
+	-- singleton - reset the instance
+	public static clearInstance: () ==> Linkedin
+	clearInstance() == (
+		linkedin := new Linkedin();
+		return getInstance();
+	)
+	post RESULT.users = {};
+
 	-- add a new user to the social network
 	public addUser: User ==> ()
 	addUser(user) == users := users union {user}
@@ -52,16 +66,6 @@ operations
 	public removeGroupUser: seq1 of char * User ==> ()
 	removeGroupUser(name, user) == groups(name).removeUser(user)
 	pre user in set users and name in set dom groups;
-	
-	-- send a message to a group
-	public msgGroup: seq1 of char * User * seq1 of char ==> ()
-	msgGroup(groupName, user, msg) == groups(groupName).sendMsg(user, msg)
-	pre user in set users and groupName in set dom groups;
-	
-	-- get messages from a group
-	public pure getGroupMsgs: seq1 of char * User ==> seq of Group`Message
-	getGroupMsgs(groupName, user) == return groups(groupName).checkMsgs(user)
-	pre user in set users and groupName in set dom groups;
 	
 	-- returns the most popular group in the social network
 	public pure mostPopularGroup: () ==> seq1 of char
@@ -184,7 +188,7 @@ operations
 	post RESULT >= 0;
 	
 functions
--- TODO Define functiones here
+
 traces
 -- TODO Define Combinatorial Test Traces here
 end Linkedin

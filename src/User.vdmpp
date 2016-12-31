@@ -63,6 +63,51 @@ operations
 		deleteCV() == updateCV("")
 	post cv = "";
 	
+	-- returns all users that have a similar name to the given one ordered by a rank (distance from the user)
+	public userSearchByName: seq of char ==> seq of User
+	userSearchByName(name) == (
+		dcl result: seq of User := [];
+		dcl result_temp: seq of User := [];
+		dcl inserted: bool := false;
+		-- get all the matches
+		dcl matches: set of User := Linkedin`getInstance().searchByName(name) \ {self};
+		
+		-- for each match...
+		for all user2 in set matches do (
+			inserted := false;
+			result_temp := [];
+			-- ...insert in the correct place
+			for user in result do (
+				if not inserted and Linkedin`getInstance().distance(self, user) < Linkedin`getInstance().distance(self, user2) then (
+					inserted := true;
+					result_temp := result_temp ^ [user2];
+				);
+				result_temp := result_temp ^ [user];
+			);
+
+			-- if it is the most distant user then it was not inserted before
+			if not inserted then
+				result_temp := result_temp ^ [user2];
+				
+			result := result_temp;
+		);
+		return result
+	)
+	pre self in set Linkedin`getInstance().users and len name > 0;
+	
+	-- send a message to a group
+	public msgGroup: seq1 of char * seq1 of char ==> ()
+	msgGroup(groupName, msg) == (
+		dcl groups: map seq1 of char to Group := Linkedin`getInstance().groups;
+		groups(groupName).sendMsg(self, msg);
+	)
+	pre self in set Linkedin`getInstance().users and groupName in set dom Linkedin`getInstance().groups;
+	
+	-- get messages from a group
+	public pure getGroupMsgs: seq1 of char ==> seq of Group`Message
+	getGroupMsgs(groupName) == return Linkedin`getInstance().groups(groupName).checkMsgs(self)
+	pre self in set Linkedin`getInstance().users and groupName in set dom Linkedin`getInstance().groups;
+	
 functions
 -- TODO Define functiones here
 traces
