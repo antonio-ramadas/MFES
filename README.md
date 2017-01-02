@@ -10,7 +10,8 @@ This project, which has been developed in VDM++, tries to partially emulate the 
     - Get average distance from a user to all others
     - Get average distance of all users
     - Get famous user (most connections)
-    - Search by name
+    - Search user by name
+    - Search user by name sorted by the distance from the current user
  - Groups
     - Add group
     - Get group's name
