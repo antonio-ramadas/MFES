@@ -13,6 +13,9 @@ instance variables
 	
 	private static linkedin: Linkedin := new Linkedin();
 	
+	-- invariant to maintain the correctness (each connection is bidirectional)
+	inv forall user1 in set users & forall user2 in set user1.connections & user1 in set user2.connections;
+
 operations
 	-- constructor
 	private Linkedin: () ==> Linkedin
@@ -39,8 +42,15 @@ operations
 	
 	-- add a new connections between users
 	public addConnection: User * User ==> ()
-	addConnection(user1, user2) ==
-	|| (user1.addConnection(user2), user2.addConnection(user1))
+	addConnection(user1, user2) == (
+	--|| (user1.addConnection(user2), user2.addConnection(user1))
+		dcl user1_temp: User := user1;
+		dcl user2_temp: User := user2;
+		atomic (
+			user1_temp.connections := user1.connections union {user2};
+			user2_temp.connections := user2.connections union {user1}
+		);
+	)
 	pre
 			-- they are not the same user
 			user1 <> user2 and
