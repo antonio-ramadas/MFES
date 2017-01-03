@@ -206,7 +206,7 @@ operations
 		
 		createAndAddUsers();
 		
-		linkedin.addGroup("Antonio's Group");
+		linkedin.addGroup("Antonio's Group", user1);
 		assertEqual(1, card dom linkedin.groups);
 
 		-- this test is suppose to fail (cannot be two groups with the same name)
@@ -221,9 +221,8 @@ operations
 		
 		createAndAddUsers();
 		
-		linkedin.addGroup("Antonio's Group");
+		linkedin.addGroup("Antonio's Group", user1);
 		
-		linkedin.addGroupUser("Antonio's Group", user1);
 		linkedin.addGroupUser("Antonio's Group", user2);
 		linkedin.addGroupUser("Antonio's Group", user3);
 		
@@ -243,12 +242,12 @@ operations
 		
 		createAndAddUsers();
 		
-		linkedin.addGroup("Antonio's Group");
+		linkedin.addGroup("Antonio's Group", user1);
 		
-		linkedin.addGroupUser("Antonio's Group", user1);
+		linkedin.addGroupUser("Antonio's Group", user2);
 		
-		linkedin.removeGroupUser("Antonio's Group", user1);
-		assertEqual({}, linkedin.groups("Antonio's Group").users);
+		linkedin.removeGroupUser("Antonio's Group", user2);
+		assertEqual({user1}, linkedin.groups("Antonio's Group").users);
 		
 		-- this test is suppose to fail (cannot remove a user that is not in the group)
 		/*linkedin.removeGroupUser("Antonio's Group", user2);*/
@@ -264,9 +263,7 @@ operations
 		
 		createAndAddUsers();
 		
-		linkedin.addGroup("Antonio's Group");
-		
-		linkedin.addGroupUser("Antonio's Group", user1);
+		linkedin.addGroup("Antonio's Group", user1);
 		
 		user1.msgGroup("Antonio's Group", "Hello, World!");
 		assertEqual(["Hello, World!"], user1.getGroupMsgs("Antonio's Group"));
@@ -288,18 +285,14 @@ operations
 		
 		createAndAddUsers();
 		
-		linkedin.addGroup("Antonio's Group");
-		linkedin.addGroup("Duarte's Group");
-		linkedin.addGroup("Marina's Group");
-		
-		linkedin.addGroupUser("Antonio's Group", user1);
+		linkedin.addGroup("Antonio's Group", user1);
 		linkedin.addGroupUser("Antonio's Group", user2);
 		linkedin.addGroupUser("Antonio's Group", user3);
 		
-		linkedin.addGroupUser("Duarte's Group", user1);
+		linkedin.addGroup("Duarte's Group", user1);
 		linkedin.addGroupUser("Duarte's Group", user2);
 		
-		linkedin.addGroupUser("Marina's Group", user1);
+		linkedin.addGroup("Marina's Group", user1);
 		
 		assertEqual("Antonio's Group", linkedin.mostPopularGroup());
 	);
@@ -311,9 +304,9 @@ operations
 		
 		createAndAddUsers();
 		
-		linkedin.addGroup("Antonio's Group");
-		linkedin.addGroup("Duarte's Group");
-		linkedin.addGroup("Marina's Group");
+		linkedin.addGroup("Antonio's Group", user1);
+		linkedin.addGroup("Duarte's Group", user1);
+		linkedin.addGroup("Marina's Group", user1);
 		
 		assertEqual({"Antonio's Group", "Duarte's Group", "Marina's Group"}, linkedin.getGroupNames());
 	);
@@ -325,7 +318,7 @@ operations
 		
 		createAndAddUsers();
 		
-		linkedin.addGroup("Antonio's Group");
+		linkedin.addGroup("Antonio's Group", user1);
 		
 		assertEqual(linkedin.groups("Antonio's Group"), linkedin.getGroupInfo("Antonio's Group"));
 		

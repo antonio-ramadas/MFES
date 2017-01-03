@@ -8,7 +8,7 @@ instance variables
 	-- users of the social network
 	public users: set of User := {};
 	
-	--groups of the social network
+	-- groups of the social network
 	public groups: map seq1 of char to Group := {|->};
 	
 	private static linkedin: Linkedin := new Linkedin();
@@ -53,9 +53,9 @@ operations
 	post user2 in set user1.connections and user1 in set user2.connections;
 	
 	-- add a new group to the social network (each group name is unique)
-	public addGroup: seq1 of char ==> ()
-	addGroup(name) == groups := groups munion {name |-> new Group()}
-	pre name not in set dom groups;
+	public addGroup: seq1 of char * User ==> ()
+	addGroup(name, user) == groups := groups munion {name |-> new Group(user)}
+	pre name not in set dom groups and user in set users;
 	
 	-- add a user to the group
 	public addGroupUser: seq1 of char * User ==> ()
