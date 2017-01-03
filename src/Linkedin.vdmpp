@@ -40,6 +40,17 @@ operations
 	pre user not in set users
 	post users = users~ union {user};
 	
+	-- get the name of all users
+	public getUsersName: () ==> seq of seq of char
+	getUsersName() == (
+		dcl names: seq of seq of char := [];
+		
+		for all user in set users do
+			names := names ^ [user.name];
+
+		return names
+	);
+	
 	-- add a new connections between users
 	public addConnection: User * User ==> ()
 	addConnection(user1, user2) == (

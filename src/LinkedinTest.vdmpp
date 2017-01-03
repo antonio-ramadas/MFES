@@ -26,6 +26,10 @@ operations
 		linkedinTest.testAddUsers();
 		IO`println("Success");
 		
+		IO`print("testUsersName -> ");
+		linkedinTest.testUsersName();
+		IO`println("Success");
+		
 		IO`print("testUserSearch -> ");
 		linkedinTest.testUserSearch();
 		IO`println("Success");
@@ -100,6 +104,16 @@ operations
 		
 		-- this test is supposed to fail (the same user cannot register twice in the network)
 		/**linkedin.addUser(user1);**/
+	);
+	
+	-- test if the return of the users' name in the social network is working correctly
+	private testUsersName: () ==> ()
+	testUsersName() == (
+		dcl linkedin: Linkedin := Linkedin`clearInstance();
+		
+		createAndAddUsers();
+		
+		assertEqual([user1.name,	user2.name, user3.name,	user4.name, user5.name,	user6.name, user7.name,	user8.name, user9.name], linkedin.getUsersName());
 	);
 	
 	-- test user search by their name
