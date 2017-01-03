@@ -14,7 +14,7 @@ This project, which has been developed in VDM++, tries to partially emulate the 
     - Search user by name sorted by the distance from the current user
  - Groups
     - Add group
-    - Get group's name
+    - Get groups' name
     - Get group's info
     - Add a user to a group
     - Remove a user from a group

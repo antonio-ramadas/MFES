@@ -82,7 +82,9 @@ operations
 		linkedinTest.testUsersAvgDistance();
 		IO`println("Success");
 		
+		IO`print("testUserAvgDistance -> ");
 		linkedinTest.testUserAvgDistance();
+		IO`println("Success");
 	);
 	
 	-- test if the registration of users in the social network is working correctly
