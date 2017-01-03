@@ -15,7 +15,7 @@ This project, which has been developed in VDM++, tries to partially emulate the 
  - Groups
     - Add group
     - Get groups' name
-    - Get groups' info
+    - Get group's info
     - Add a user to a group
     - Remove a user from a group
     - Message group
