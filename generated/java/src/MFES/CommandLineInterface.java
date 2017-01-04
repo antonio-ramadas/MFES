@@ -212,7 +212,7 @@ public class CommandLineInterface{
 		
 		while(!isValidUserId(id)){
 			printInvalidUsersId();
-			System.out.println("Enter user's id: ");
+			System.out.print("Enter user's id: ");
 			id = scanner.nextLine();
 		}
 		
@@ -238,6 +238,7 @@ public class CommandLineInterface{
 	}
 
 	private String selectGroup(boolean hasParent) {
+		System.out.println();
 		System.out.print("Enter group's name: ");
 		Scanner scanner = new Scanner(System.in);
 		String id = scanner.nextLine();
@@ -287,7 +288,7 @@ public class CommandLineInterface{
 				usersMenu(true);
 				break;
 			case "Average distance of an user to other users":
-				averageDistanceUser(true);
+				averageDistanceToUser(true);
 				usersMenu(true);
 				break;
 			case BACK_INPUT:
@@ -299,29 +300,63 @@ public class CommandLineInterface{
 		}
 	}
 
-	private void averageDistanceUser(boolean b) {
-		// TODO Auto-generated method stub
+	private void averageDistanceToUser(boolean hasParent) {
+		User user = enterUserId();
+		System.out.println("Average distance to user "+user.name+": "+linkedIn.averageDistanceToOthers(user));
+	}
+
+	private void distanceBetweenTwoUsers(boolean hasParent) {
+		System.out.print("User 1.");
+		User user1 = enterUserId();
+		
+		System.out.print("User 2.");
+		
+		User user2 = enterUserId();
+		
+		Number distance = linkedIn.distance(user1, user2);
+		
+		System.out.println("Distance between the user "+user1.name+" and user "+user2.name+": "+distance);
+		
+		try {
+			wait(5000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		
 	}
 
-	private void distanceBetweenTwoUsers(boolean b) {
-		// TODO Auto-generated method stub
+	private void addConnectionUsers(boolean hasParent) {
+		System.out.print("User 1.");
+		User user1 = enterUserId();
 		
+		System.out.print("User 2.");
+		
+		User user2 = enterUserId();
+		
+		linkedIn.addConnection(user1, user2);
+		System.out.println("Connection Added");
+		
+		try {
+			wait(5000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 
-	private void addConnectionUsers(boolean b) {
-		// TODO Auto-generated method stub
+	private void addUser(boolean hasParent) {
+		System.out.print("Enter new user's name: ");
+		Scanner scanner = new Scanner(System.in);
+		String username = scanner.nextLine();
 		
-	}
-
-	private void addUser(boolean b) {
-		// TODO Auto-generated method stub
+		User user = new User(username);
+		
+		linkedIn.addUser(user);
 	}
 
 	private void userProfile(boolean hasParent) {
 		printDivision("User");
 		
-		String user = selectUser();
+		User user = enterUserId();
 		
 		ArrayList<String> options = new ArrayList<>();
 		options.add("Add connection to other users");
@@ -361,34 +396,71 @@ public class CommandLineInterface{
 		
 	}
 
-	private void checkMessagesFromGroup(boolean b, String user) {
+	private void checkMessagesFromGroup(boolean hasParent, User user) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	private void deleteCV(boolean b, String user) {
+	private void deleteCV(boolean hasParent, User user) {
+		boolean delete = confirmationDialog();
+		
+		if(delete){
+			user.deleteCV();
+		}else{
+			return;
+		}
+	}
+	
+	private boolean confirmationDialog(){
+		System.out.println("Are you sure? (Y\\N)");
+		Scanner scanner = new Scanner(System.in);
+		String input = scanner.nextLine().toLowerCase();
+		boolean validInput = false;
+		
+		
+		while(!validInput){
+			switch(input){
+				case "y":
+					validInput = true;
+					return true;
+				case "n":
+					validInput = true;
+					return false;
+				default: 
+					printInvalidInputMessage();
+					input = scanner.nextLine().toLowerCase();
+					break;
+			}
+		}
+		
+		return false;
+		
+	}
+
+	private void sendMessageToGroup(boolean hasParent, User user) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	private void sendMessageToGroup(boolean b, String user) {
+	private void updateCv(boolean hasParent, User user) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	private void updateCv(boolean b, String user) {
+	private void addConnectionToUser(boolean hasParent, User user) {
 		// TODO Auto-generated method stub
 		
-	}
-
-	private void addConnectionToUser(boolean b, String user) {
-		// TODO Auto-generated method stub
+		User user2 = enterUserId();
+		user.addConnection(user2);
 		
-	}
-
-	private String selectUser() {
-		// TODO Auto-generated method stub
-		return null;
+		System.out.println("Connection added!");
+		try {
+			wait(5000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 
 	private void printListUsers() {
@@ -420,7 +492,7 @@ public class CommandLineInterface{
 			input = scanner.nextLine();
 			validInput = isValidInput(options, hasParent, input);
 			if(!validInput){
-				printWrongOptionMessage();
+				printInvalidInputMessage();
 			}
 		}
 		
@@ -451,7 +523,7 @@ public class CommandLineInterface{
 		}
 	}
 
-	public void printWrongOptionMessage() {
+	public void printInvalidInputMessage() {
 		System.out.println("Invalid input!!!");
 		
 	}
