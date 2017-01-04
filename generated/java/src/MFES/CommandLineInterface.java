@@ -2,6 +2,8 @@ package MFES;
 
 import java.util.*;
 
+import org.overture.codegen.runtime.VDMSet;
+
 public class CommandLineInterface{
 	public static final String BACK_INPUT = "b";
 	public static final String MENU_INPUT = "m";
@@ -128,8 +130,40 @@ public class CommandLineInterface{
 	}
 
 	private void searchUsersByName(boolean hasParent) {
-		// TODO Auto-generated method stub
+		printDivision("Search");
+		System.out.println("Search: ");
+		Scanner scanner = new Scanner(System.in);
+		String search = scanner.nextLine();
 		
+		Set<User> searchResult = linkedIn.searchByName(search);
+		
+		printSearcResult(searchResult);
+		
+		ArrayList<String> options = new ArrayList<>();
+		options.add("Go to user profile");
+		
+		String input = printOptions(options, hasParent);
+		switch(input){
+			case "Go to user profile":
+				User user = enterUserId();
+				userProfile(true, user);
+				searchUsersByName(hasParent);
+				break;
+			case BACK_INPUT:
+				return;
+			case MENU_INPUT: 
+				mainMenu();
+				break;
+		}
+		
+		
+		
+	}
+
+	private void printSearcResult(Set<User> searchResult) {
+		System.out.println("Results:");
+		printListUsers(searchResult);	
+		System.out.println();
 	}
 
 	private void groupsMenu(boolean hasParent) {
@@ -219,8 +253,20 @@ public class CommandLineInterface{
 		return getUserById(id);
 	}
 	
-	private User getUserById(String id) {
-		// TODO Auto-generated method stub
+	private User getUserById(String idStr) {
+		
+		int id;
+		try{
+			id= Integer.parseInt(idStr);
+		}catch(Exception e){
+			return null;
+		}
+		Set<User> users = linkedIn.users;
+		for(User user : users){
+			if(id == user.id.intValue()){
+				return user;
+			}
+		}
 		return null;
 	}
 
@@ -229,9 +275,23 @@ public class CommandLineInterface{
 		try{
 			int id = Integer.parseInt(idStr);
 			
-			//TODO Verificar se existe um utilizador com esse id
-			return true;
+			Set<User> users = linkedIn.users;
+			
+		
+			for(User user : users){
+				
+				//System.out.println("LOG: Avaliar ids: user_"+user.id + " e id_"+id);
+				
+				if(user.id.intValue() == id){
+					return true;
+				}
+			}
+			
+			//System.out.println("LOG: id não válido" );
+			
+			return false;
 		}catch(Exception e){
+			e.printStackTrace();
 			return false;
 		}
 
@@ -258,9 +318,19 @@ public class CommandLineInterface{
 		linkedIn.addGroup(group, user);
 	}
 
+	private void printUserInfo(User user){
+		System.out.println("ID: "+user.id);
+		System.out.println("Name: "+user.name);
+		System.out.println("CV: \n"+user.cv);
+		System.out.println();
+		System.out.println();
+	}
+	
 	public void usersMenu(boolean hasParent){
 		printDivision("List of users");
+		System.out.println();
 		printListUsers();
+		System.out.println();
 		
 		ArrayList<String> options = new ArrayList<>();
 		options.add("See User's Profile");
@@ -272,7 +342,8 @@ public class CommandLineInterface{
 		String input = printOptions(options, hasParent);
 		switch(input){
 			case "See User's Profile":
-				userProfile(true);
+				User user = enterUserId();
+				userProfile(true, user);
 				usersMenu(true);
 				break;
 			case "Add User":
@@ -353,10 +424,11 @@ public class CommandLineInterface{
 		linkedIn.addUser(user);
 	}
 
-	private void userProfile(boolean hasParent) {
-		printDivision("User");
+	private void userProfile(boolean hasParent, User user) {
 		
-		User user = enterUserId();
+
+		printDivision("User");
+		printUserInfo(user);
 		
 		ArrayList<String> options = new ArrayList<>();
 		options.add("Add connection to other users");
@@ -369,23 +441,23 @@ public class CommandLineInterface{
 		switch(input){
 			case "Add connection to other users":
 				addConnectionToUser(true, user);
-				userProfile(true);
+				userProfile(true, user);
 				break;
 			case "Update CV":
 				updateCv(true, user);
-				userProfile(true);
+				userProfile(true, user);
 				break;
 			case "Delete CV":
 				deleteCV(true, user);
-				userProfile(true);
+				userProfile(true, user);
 				break;
 			case "Send a message to a group":
 				sendMessageToGroup(true, user);
-				userProfile(true);
+				userProfile(true, user);
 				break;
 			case "Check messages from a group":
 				checkMessagesFromGroup(true, user);
-				userProfile(true);
+				userProfile(true, user);
 				break;
 			case BACK_INPUT:
 				return;
@@ -397,8 +469,7 @@ public class CommandLineInterface{
 	}
 
 	private void checkMessagesFromGroup(boolean hasParent, User user) {
-		// TODO Auto-generated method stub
-		
+		//TODO Auto-generated method 
 	}
 
 	private void deleteCV(boolean hasParent, User user) {
@@ -447,9 +518,7 @@ public class CommandLineInterface{
 		
 	}
 
-	private void addConnectionToUser(boolean hasParent, User user) {
-		// TODO Auto-generated method stub
-		
+	private void addConnectionToUser(boolean hasParent, User user) {		
 		User user2 = enterUserId();
 		user.addConnection(user2);
 		
@@ -457,15 +526,21 @@ public class CommandLineInterface{
 		try {
 			wait(5000);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
 	}
 
 	private void printListUsers() {
-		// TODO Auto-generated method stub
+		Set<User> users = linkedIn.users;
+		printListUsers(users);
 		
+	}
+	
+	private void printListUsers(Set<User> users){
+		for(User user : users){
+			System.out.println("Name: "+user.name+spacesFill(16,user.name.length())+"ID: "+user.id);
+		}
 	}
 
 	public void printDivision(String menu){
@@ -531,4 +606,20 @@ public class CommandLineInterface{
 	public void printInvalidUsersId(){
 		System.out.println("Invalid user's id");
 	}
+	
+	public String spacesFill(int maxSize, int used){
+		String retStr = "";
+		int iMax= maxSize-used;
+		
+		if (iMax <= 0){
+			return " ";
+		}
+		
+		for(int i = 0; i < iMax; i++){
+			retStr += " ";
+		}
+		
+		return retStr;
+	}
+	
 }
