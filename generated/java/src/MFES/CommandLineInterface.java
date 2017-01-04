@@ -84,17 +84,46 @@ public class CommandLineInterface{
 	}
 
 	private void averageUsersDistance(boolean hasParent) {
-		// TODO Auto-generated method stub
+		System.out.println();
+		System.out.print("Average user info: ");
+		Number avgUserDist = linkedIn.averageUserDistance();
+
+		System.out.println(""+avgUserDist);
 		
+		try {
+			wait(5000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private void mostFamousGroup(boolean hasParent) {
-		// TODO Auto-generated method stub
+		System.out.println();
+		System.out.print("Most famous group: ");
+		String group= linkedIn.mostPopularGroup();
+
+		System.out.println(group);
+		
+		try {
+			wait(5000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		
 	}
 
 	private void mostFamousUser(boolean hasParent) {
-		// TODO Auto-generated method stub
+		System.out.println();
+		System.out.println("Most famous user: ");
+		User user = linkedIn.mostFamousUser();
+		
+		System.out.println("Name: "+user.name);
+		System.out.println("Id: "+user.id);
+		try {
+			wait(5000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		
 	}
 
@@ -430,6 +459,4 @@ public class CommandLineInterface{
 	public void printInvalidUsersId(){
 		System.out.println("Invalid user's id");
 	}
-	
-	
 }
