@@ -83,22 +83,22 @@ public class CommandLineInterface{
 		
 	}
 
-	private void averageUsersDistance(boolean b) {
+	private void averageUsersDistance(boolean hasParent) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	private void mostFamousGroup(boolean b) {
+	private void mostFamousGroup(boolean hasParent) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	private void mostFamousUser(boolean b) {
+	private void mostFamousUser(boolean hasParent) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	private void searchUsersByName(boolean b) {
+	private void searchUsersByName(boolean hasParent) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -131,22 +131,29 @@ public class CommandLineInterface{
 
 	private void groupsInfo(boolean hasParent) {
 		
-		printDivision("Groups Info");
-		String group = selectGroup(hasParent);
+		printDivision("Group's Info");
+		String groupName = selectGroup(hasParent);
 		
+		Group group = linkedIn.getGroupInfo(groupName);
+		
+		while(group == null){
+			System.out.println("Wrong name!!!");
+			groupName = selectGroup(hasParent);
+			group = linkedIn.getGroupInfo(groupName);
+		}
 		
 		ArrayList<String> options = new ArrayList<>();
 		options.add("Add existing user to group");
-		options.add("Add a new group");
+		options.add("Remove user from group");
 		
 		String input = printOptions(options, hasParent);
 		switch(input){
 			case "Add existing user to group":
-				addUserToGroup(true);
+				addUserToGroup(true, groupName);
 				groupsInfo(hasParent);
 				break;
-			case "Add a new group":
-				addNewGroup(true);
+			case "Remove user from group":
+				removeUserFromGroup(true, groupName);
 				groupsInfo(hasParent);
 				break;
 			case BACK_INPUT:
@@ -157,19 +164,68 @@ public class CommandLineInterface{
 		}
 	}
 
-	private void addUserToGroup(boolean b) {
-		// TODO Auto-generated method stub
+	private void removeUserFromGroup(boolean hasParent, String group) {
+		User user = enterUserId();
 		
+		linkedIn.removeGroupUser(group , user);	
 	}
 
-	private String selectGroup(boolean hasParent) {
+	private void addUserToGroup(boolean hasParent, String group) {
+		User user = enterUserId();
+		
+		linkedIn.addGroupUser(group , user);
+	}
+
+	private User enterUserId(){
+		System.out.print("Enter user's id: ");
+		Scanner scanner = new Scanner(System.in);
+		String id = scanner.nextLine();
+		
+		while(!isValidUserId(id)){
+			printInvalidUsersId();
+			System.out.println("Enter user's id: ");
+			id = scanner.nextLine();
+		}
+		
+		return getUserById(id);
+	}
+	
+	private User getUserById(String id) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	private void addNewGroup(boolean b) {
-		// TODO Auto-generated method stub
+	private boolean isValidUserId(String idStr) {
 		
+		try{
+			int id = Integer.parseInt(idStr);
+			
+			//TODO Verificar se existe um utilizador com esse id
+			return true;
+		}catch(Exception e){
+			return false;
+		}
+
+	}
+
+	private String selectGroup(boolean hasParent) {
+		System.out.print("Enter group's name: ");
+		Scanner scanner = new Scanner(System.in);
+		String id = scanner.nextLine();
+		
+		
+		
+		return id;
+	}
+
+	private void addNewGroup(boolean hasParent) {
+		User user = enterUserId();
+		
+		System.out.print("Enter group's name: ");
+		Scanner scanner = new Scanner(System.in);
+		String group = scanner.nextLine();
+		
+		linkedIn.addGroup(group, user);
 	}
 
 	public void usersMenu(boolean hasParent){
@@ -369,6 +425,10 @@ public class CommandLineInterface{
 	public void printWrongOptionMessage() {
 		System.out.println("Invalid input!!!");
 		
+	}
+	
+	public void printInvalidUsersId(){
+		System.out.println("Invalid user's id");
 	}
 	
 	
