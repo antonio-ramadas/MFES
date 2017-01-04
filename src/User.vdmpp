@@ -9,12 +9,15 @@ instance variables
 	public connections: set of User := {};
 	public name: seq1 of char;
 	public cv: seq of char := "";
+	public static currId : int := 0;
+	public id : int;
 	
 operations
 	-- constructor
 	public User: seq1 of char ==> User
 	User(n) == (
 		name := n;
+		id := currId++;
 		return self
 	)
 	post connections = {} and name = n;
