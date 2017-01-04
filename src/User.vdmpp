@@ -10,14 +10,14 @@ instance variables
 	public name: seq1 of char;
 	public cv: seq of char := "";
 	public static currId : int := 0;
-	public id : int;
+	public id : int := currId;
 	
 operations
 	-- constructor
 	public User: seq1 of char ==> User
 	User(n) == (
 		name := n;
-		id := currId++;
+		currId := currId +1;
 		return self
 	)
 	post connections = {} and name = n;
