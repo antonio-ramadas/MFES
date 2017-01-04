@@ -20,7 +20,7 @@ operations
 		currId := currId +1;
 		return self
 	)
-	post connections = {} and name = n;
+	post connections = {} and name = n and id = currId~ and currId = currId~ + 1;
 	
 	-- add a new connection on this user
 	public addConnection: User ==> ()
@@ -92,7 +92,7 @@ operations
 		dcl inserted: bool := false;
 		dcl distance: nat1;
 		
-		-- for each match...
+		
 		for all match in set search do (
 			inserted := false;
 			distance := Linkedin`getInstance().distance(self, match);
