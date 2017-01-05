@@ -94,12 +94,12 @@ operations
 		dcl name: [seq1 of char] := nil;
 		
 		for all groupName in set dom groups do
-			if name = nil or len groups(groupName).msgs > len groups(name).msgs then
+			if name = nil or card groups(groupName).users > card groups(name).users then
 				name := groupName;
 		
 		return name
 	)
-	post RESULT in set dom groups and card {g | g in set dom groups & len groups(g).msgs > len groups(RESULT).msgs} = 0;
+	post RESULT in set dom groups and card {g | g in set dom groups & card groups(g).users > card groups(RESULT).users} = 0;
 	
 	-- returns the names of all groups in the social network
 	public pure getGroupNames: () ==> set of seq1 of char
