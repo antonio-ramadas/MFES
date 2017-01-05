@@ -1,7 +1,9 @@
 package MFES;
 
+import java.io.IOException;
 import java.util.*;
 
+import org.overture.codegen.runtime.VDMSeq;
 import org.overture.codegen.runtime.VDMSet;
 
 public class CommandLineInterface{
@@ -9,6 +11,7 @@ public class CommandLineInterface{
 	public static final String MENU_INPUT = "m";
 	
 	Linkedin linkedIn = Linkedin.getInstance();
+	Scanner scanner = new Scanner(System.in);
 	
 	public CommandLineInterface(){}
 	
@@ -132,7 +135,6 @@ public class CommandLineInterface{
 	private void searchUsersByName(boolean hasParent) {
 		printDivision("Search");
 		System.out.println("Search: ");
-		Scanner scanner = new Scanner(System.in);
 		String search = scanner.nextLine();
 		
 		Set<User> searchResult = linkedIn.searchByName(search);
@@ -195,15 +197,15 @@ public class CommandLineInterface{
 
 	private void groupsInfo(boolean hasParent, String groupName) {
 		
-		printDivision("Group's Info");
-		
-		Group group = linkedIn.getGroupInfo(groupName);
-		
-		while(group == null){
-			System.out.println("Wrong name!!!");
-			groupName = selectGroup(hasParent);
+		Group group;
+		try{
 			group = linkedIn.getGroupInfo(groupName);
+		}catch(Exception e){
+			System.out.println("Invalid group name");
+			groupsInfo(hasParent, selectGroup(hasParent));
+			return;
 		}
+		printDivision("Group's Info");
 		
 		printDivision(groupName);
 		System.out.println();
@@ -247,7 +249,6 @@ public class CommandLineInterface{
 
 	private User enterUserId(){
 		System.out.print("Enter user's id: ");
-		Scanner scanner = new Scanner(System.in);
 		String id = scanner.nextLine();
 		
 		while(!isValidUserId(id)){
@@ -306,19 +307,15 @@ public class CommandLineInterface{
 	private String selectGroup(boolean hasParent) {
 		System.out.println();
 		System.out.print("Enter group's name: ");
-		Scanner scanner = new Scanner(System.in);
-		String id = scanner.nextLine();
+		String name = scanner.nextLine();
 		
-		
-		
-		return id;
+		return name;
 	}
 
 	private void addNewGroup(boolean hasParent) {
 		User user = enterUserId();
 		
 		System.out.print("Enter group's name: ");
-		Scanner scanner = new Scanner(System.in);
 		String group = scanner.nextLine();
 		
 		linkedIn.addGroup(group, user);
@@ -425,7 +422,6 @@ public class CommandLineInterface{
 
 	private void addUser(boolean hasParent) {
 		System.out.print("Enter new user's name: ");
-		Scanner scanner = new Scanner(System.in);
 		String username = scanner.nextLine();
 		
 		User user = new User(username);
@@ -478,7 +474,40 @@ public class CommandLineInterface{
 	}
 
 	private void checkMessagesFromGroup(boolean hasParent, User user) {
-		//TODO Auto-generated method 
+		System.out.print("Enter group's name: ");
+		String input = scanner.nextLine();
+		try{
+			printDivision("Messages");
+			VDMSeq seq = user.getGroupMsgs(input);
+			
+			printGroupMessages(seq);
+
+			ArrayList<String> options = new ArrayList<>();
+
+			
+			input = printOptions(options, hasParent);
+			switch(input){
+				case BACK_INPUT:
+					return;
+				case MENU_INPUT: 
+					mainMenu();
+					break;
+			}
+		}catch(Exception e){
+			System.out.println("Invalid group name");
+			checkMessagesFromGroup(hasParent, user);
+		}
+		
+	}
+		
+	private void printGroupMessages(VDMSeq seq){
+		for(int i = 0; i < seq.size(); i++){
+			System.out.println(i+"- "+ seq.get(i));
+			System.out.println();
+
+		}
+		System.out.println();
+		System.out.println();
 	}
 
 	private void deleteCV(boolean hasParent, User user) {
@@ -493,7 +522,6 @@ public class CommandLineInterface{
 	
 	private boolean confirmationDialog(){
 		System.out.println("Are you sure? (Y\\N)");
-		Scanner scanner = new Scanner(System.in);
 		String input = scanner.nextLine().toLowerCase();
 		boolean validInput = false;
 		
@@ -518,15 +546,29 @@ public class CommandLineInterface{
 	}
 
 	private void sendMessageToGroup(boolean hasParent, User user) {
-		// TODO Auto-generated method stub
+		System.out.print("Enter group's name: ");
+		String group = scanner.nextLine();
+		System.out.println("Enter message:");
+		String input = scanner.nextLine();
+
+		try{
+			
+			user.msgGroup(group, input);
+			
+			
+		}catch(Exception e){
+			System.out.println("Invalid group name");
+			checkMessagesFromGroup(hasParent, user);
+		}
 		
 	}
 
 	private void updateCv(boolean hasParent, User user) {
-		// TODO Auto-generated method stub
-		
+		System.out.println("Edit CV:");
+		String input = scanner.nextLine();
+		user.updateCV(input);
 	}
-
+	
 	private void addConnectionToUser(boolean hasParent, User user) {		
 		User user2 = enterUserId();
 		user.addConnection(user2);
@@ -570,7 +612,6 @@ public class CommandLineInterface{
 		System.out.print("Select one of the options: ");
 		
 		boolean validInput = false;
-		Scanner scanner = new Scanner(System.in);
 		String input = "";
 		while(!validInput){
 			input = scanner.nextLine();
