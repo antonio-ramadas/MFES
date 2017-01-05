@@ -5,7 +5,6 @@ types
 values
 -- TODO Define values here
 instance variables
-	-- network of contacts of this user
 	public connections: set of User := {};
 	public name: seq1 of char;
 	public cv: seq of char := "";
@@ -13,22 +12,24 @@ instance variables
 	public id : int := currId;
 	
 operations
-	-- constructor
 	public User: seq1 of char ==> User
 	User(n) == (
 		name := n;
 		currId := currId +1;
 		return self
 	)
-	post connections = {} and name = n and id = currId~ and currId = currId~ + 1;
+	post connections = {} and
+			name = n and
+			id = currId~ and
+			currId = currId~ + 1;
 	
-	-- add a new connection on this user
+
 	public addConnection: User ==> ()
 	addConnection(c) == connections := connections union {c}
 	pre c <> self and c not in set connections
 	post connections = connections~ union {c};
 	
-	-- compares the given name woth the one of the user
+
 	public pure similarName: seq of char ==> bool
 	similarName(n) == (
 		dcl nameS: seq of char := name;
@@ -37,7 +38,6 @@ operations
 		while len nameS >= len n and not found do (
 			found := true;
 	
-			-- it only compares until the length of n
 			for index = 1 to len n do
 				if found and n(index) <> nameS(index) then (
 					found := false;
@@ -55,18 +55,19 @@ operations
 	)
 	pre len n > 0;
 	
-	-- update cv
+
 	public updateCV: seq of char ==> ()
 	updateCV(text) ==
 		cv := text
 	pre text <> undefined
 	post cv = text;
 	
-	-- delete cv (write nothing to it)
+
 	public deleteCV: () ==> ()
 		deleteCV() == updateCV("")
 	post cv = "";
 	
+
 	-- returns all users that have a similar name to the given one ordered by a rank (distance from the user)
 	-- it is guaranteed by the post condition that there are no repetitions
 	public userSearchByName: seq of char ==> seq of User
@@ -80,7 +81,8 @@ operations
 
 		return result
 	)
-	pre self in set Linkedin`getInstance().users and len name > 0
+	pre self in set Linkedin`getInstance().users and
+			len name > 0
 	post card {user | user in seq RESULT & user in set Linkedin`getInstance().users} = len RESULT;
 	
 	-- rank a search by the distance (the first element is a better match than the last one)
@@ -92,13 +94,12 @@ operations
 		dcl inserted: bool := false;
 		dcl distance: nat1;
 		
-		
 		for all match in set search do (
 			inserted := false;
 			distance := Linkedin`getInstance().distance(self, match);
 			sortedSearch_temp := [];
 			
-			-- ...insert in the correct place
+			-- insert in the correct place
 			for pair in sortedSearch do (
 				if not inserted and distance < pair.key then (
 					inserted := true;
@@ -118,18 +119,20 @@ operations
 	)
 	pre card {user | user in set search & user in set Linkedin`getInstance().users and user <> self} = card search;
 	
-	-- send a message to a group
+
 	public msgGroup: seq1 of char * seq1 of char ==> ()
 	msgGroup(groupName, msg) == (
 		dcl groups: map seq1 of char to Group := Linkedin`getInstance().groups;
 		groups(groupName).sendMsg(self, msg);
 	)
-	pre self in set Linkedin`getInstance().users and groupName in set dom Linkedin`getInstance().groups;
+	pre self in set Linkedin`getInstance().users and
+			groupName in set dom Linkedin`getInstance().groups;
 	
-	-- get messages from a group
+
 	public pure getGroupMsgs: seq1 of char ==> seq of Group`Message
 	getGroupMsgs(groupName) == return Linkedin`getInstance().groups(groupName).checkMsgs(self)
-	pre self in set Linkedin`getInstance().users and groupName in set dom Linkedin`getInstance().groups;
+	pre self in set Linkedin`getInstance().users and
+			groupName in set dom Linkedin`getInstance().groups;
 	
 functions
 -- TODO Define functiones here
