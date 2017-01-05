@@ -93,7 +93,7 @@ public class CommandLineInterface{
 		System.out.println(""+avgUserDist);
 		
 		try {
-			wait(5000);
+			Thread.sleep(5000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -107,7 +107,7 @@ public class CommandLineInterface{
 		System.out.println(group);
 		
 		try {
-			wait(5000);
+			Thread.sleep(5000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -122,7 +122,7 @@ public class CommandLineInterface{
 		System.out.println("Name: "+user.name);
 		System.out.println("Id: "+user.id);
 		try {
-			wait(5000);
+			Thread.sleep(5000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -176,7 +176,8 @@ public class CommandLineInterface{
 		String input = printOptions(options, hasParent);
 		switch(input){
 			case "See group's info":
-				groupsInfo(true);
+				String groupName = selectGroup(hasParent);
+				groupsInfo(true, groupName);
 				groupsMenu(hasParent);
 				break;
 			case "Add a new group":
@@ -192,10 +193,9 @@ public class CommandLineInterface{
 		
 	}
 
-	private void groupsInfo(boolean hasParent) {
+	private void groupsInfo(boolean hasParent, String groupName) {
 		
 		printDivision("Group's Info");
-		String groupName = selectGroup(hasParent);
 		
 		Group group = linkedIn.getGroupInfo(groupName);
 		
@@ -205,6 +205,12 @@ public class CommandLineInterface{
 			group = linkedIn.getGroupInfo(groupName);
 		}
 		
+		printDivision(groupName);
+		System.out.println();
+		System.out.println("Users:");
+		printListUsers(group.users);
+		System.out.println();
+		
 		ArrayList<String> options = new ArrayList<>();
 		options.add("Add existing user to group");
 		options.add("Remove user from group");
@@ -213,11 +219,11 @@ public class CommandLineInterface{
 		switch(input){
 			case "Add existing user to group":
 				addUserToGroup(true, groupName);
-				groupsInfo(hasParent);
+				groupsInfo(hasParent, groupName);
 				break;
 			case "Remove user from group":
 				removeUserFromGroup(true, groupName);
-				groupsInfo(hasParent);
+				groupsInfo(hasParent, groupName);
 				break;
 			case BACK_INPUT:
 				return;
@@ -291,7 +297,7 @@ public class CommandLineInterface{
 			
 			return false;
 		}catch(Exception e){
-			e.printStackTrace();
+			//e.printStackTrace();
 			return false;
 		}
 
@@ -322,6 +328,9 @@ public class CommandLineInterface{
 		System.out.println("ID: "+user.id);
 		System.out.println("Name: "+user.name);
 		System.out.println("CV: \n"+user.cv);
+		System.out.println();
+		System.out.println("Connections: ");
+		printListUsers(user.connections);
 		System.out.println();
 		System.out.println();
 	}
@@ -389,7 +398,7 @@ public class CommandLineInterface{
 		System.out.println("Distance between the user "+user1.name+" and user "+user2.name+": "+distance);
 		
 		try {
-			wait(5000);
+			Thread.sleep(5000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -408,7 +417,7 @@ public class CommandLineInterface{
 		System.out.println("Connection Added");
 		
 		try {
-			wait(5000);
+			Thread.sleep(5000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -524,7 +533,7 @@ public class CommandLineInterface{
 		
 		System.out.println("Connection added!");
 		try {
-			wait(5000);
+			Thread.sleep(5000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
