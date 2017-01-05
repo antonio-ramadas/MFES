@@ -5,26 +5,27 @@ values
 	public INFINITY: nat1 = 9999;
 
 instance variables
-	-- users of the social network
 	public users: set of User := {};
 	
-	-- groups of the social network
 	public groups: map seq1 of char to Group := {|->};
 	
 	private static linkedin: Linkedin := new Linkedin();
 	
 	-- invariant to maintain the correctness (each connection is bidirectional)
-	inv forall user1 in set users & forall user2 in set user1.connections & user1 in set user2.connections;
+	inv forall user1 in set users &
+				forall user2 in set user1.connections &
+					user1 in set user2.connections;
 
 operations
-	-- constructor
 	private Linkedin: () ==> Linkedin
 	Linkedin() == return self
 	post users = {};
 	
+	
 	-- singleton - return the existent instance
 	public pure static getInstance: () ==> Linkedin
 	getInstance() == return linkedin;
+	
 	
 	-- singleton - reset the instance
 	public static clearInstance: () ==> Linkedin
@@ -34,13 +35,13 @@ operations
 	)
 	post RESULT.users = {};
 
-	-- add a new user to the social network
+
 	public addUser: User ==> ()
 	addUser(user) == users := users union {user}
 	pre user not in set users
 	post users = users~ union {user};
-	
-	-- get the name of all users
+
+
 	public getUsersName: () ==> seq of seq of char
 	getUsersName() == (
 		dcl names: seq of seq of char := [];
@@ -50,8 +51,8 @@ operations
 
 		return names
 	);
-	
-	-- add a new connections between users
+
+
 	public addConnection: User * User ==> ()
 	addConnection(user1, user2) == (
 	--|| (user1.addConnection(user2), user2.addConnection(user1))
@@ -71,45 +72,53 @@ operations
 			-- there's no connection between them
 			user2 not in set user1.connections and
 			user1 not in set user2.connections
-	post user2 in set user1.connections and user1 in set user2.connections;
-	
-	-- add a new group to the social network (each group name is unique)
+	post user2 in set user1.connections and
+			user1 in set user2.connections;
+
+
 	public addGroup: seq1 of char * User ==> ()
 	addGroup(name, user) == groups := groups munion {name |-> new Group(user)}
-	pre name not in set dom groups and user in set users;
-	
-	-- add a user to the group
+	pre
+			-- each group name is unique
+			name not in set dom groups and
+			user in set users;
+
+
 	public addGroupUser: seq1 of char * User ==> ()
 	addGroupUser(name, user) == groups(name).addUser(user)
-	pre user in set users and name in set dom groups;
-	
-	-- remove a user from a group
+	pre user in set users and
+			name in set dom groups;
+
+
 	public removeGroupUser: seq1 of char * User ==> ()
 	removeGroupUser(name, user) == groups(name).removeUser(user)
-	pre user in set users and name in set dom groups;
-	
-	-- returns the most popular group in the social network
+	pre user in set users and
+			name in set dom groups;
+
+
 	public pure mostPopularGroup: () ==> seq1 of char
 	mostPopularGroup() == (
 		dcl name: [seq1 of char] := nil;
 		
 		for all groupName in set dom groups do
-			if name = nil or len groups(groupName).msgs > len groups(name).msgs then
+			if name = nil or card groups(groupName).users > card groups(name).users then
 				name := groupName;
 		
 		return name
 	)
-	post RESULT in set dom groups and card {g | g in set dom groups & len groups(g).msgs > len groups(RESULT).msgs} = 0;
+	post RESULT in set dom groups and
+			card {g | g in set dom groups & card groups(g).users > card groups(RESULT).users} = 0;
 	
-	-- returns the names of all groups in the social network
+
 	public pure getGroupNames: () ==> set of seq1 of char
 	getGroupNames() == return dom groups;
 	
-	-- returns all the information about a group
+
 	public pure getGroupInfo: seq1 of char ==> Group
 	getGroupInfo(name) == return groups(name)
 	pre name in set dom groups;
 	
+
 	-- returns all users that have a similar name to the given one
 	public pure searchByName: seq of char ==> set of User
 	searchByName(name) == return {user | user in set users & user.similarName(name)} --(
@@ -123,13 +132,16 @@ operations
 	--return results)
 	pre len name > 0;
 	
+
 	-- returns commun contacts between two users
 	public pure findConnections: User * User ==> set of User
 	findConnections(user1, user2) ==
 		return user1.connections inter user2.connections
-	pre user1 <> user2 and user1 in set users and user2 in set users;
+	pre user1 <> user2 and
+			user1 in set users and
+			user2 in set users;
 	
-	-- returns the most famous person in the network
+
 	public pure mostFamousUser: () ==> User
 	mostFamousUser() ==
 	(
@@ -142,9 +154,10 @@ operations
 		return famous
 	)
 	pre card users > 0
-	post RESULT in set users and card {u | u in set users & card u.connections > card RESULT.connections} = 0;
+	post RESULT in set users and
+			card {u | u in set users & card u.connections > card RESULT.connections} = 0;
 	
-	-- calculates the distance between 2 users (starts looking by the user in the first argument)
+
 	-- to calculate the minimum distance between users it is used the breadth first search algorithm
 	public pure distance: User * User ==> nat
 	distance(user1, user2) == (
@@ -155,7 +168,6 @@ operations
 		if user1 = user2 then
 			return 0;
 		
-		-- while user2 is not in the search results
 		while user2 not in set search do (
 			counter := counter + 1;
 			
@@ -176,9 +188,10 @@ operations
 		else
 			return counter
 	)
-	pre user1 in set users and user2 in set users;
+	pre user1 in set users and
+			user2 in set users;
 	
-	-- calculates the average user distance in the network
+	
 	public pure averageUserDistance: () ==> real
 	averageUserDistance() == (
 		dcl sum: real := 0;
@@ -195,7 +208,7 @@ operations
 	pre card users > 0
 	post RESULT >= 0;
 	
-	-- calculates the average distance from a user in the network to all others
+
 	public pure averageDistanceToOthers: User ==> real
 	averageDistanceToOthers(user1) == (
 		dcl sum: real := 0;

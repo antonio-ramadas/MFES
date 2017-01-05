@@ -4,15 +4,13 @@ types
 values
 -- TODO Define values here
 instance variables
-	-- group users
 	public users: set of User := {};
 	public msgs: seq of Message := [];
 	
-	-- invariant to maintain the correctness (must be at least one user in the group)
+	-- must be present at least one user in the group
 	inv card users >= 1;
 
 operations
-	-- constructor
 	public Group: User ==> Group
 	Group(user) == (
 		users := {user};
@@ -21,25 +19,26 @@ operations
 	pre user in set Linkedin`getInstance().users
 	post users = {user} and msgs = [];
 	
-	-- add a new user to the group
+
 	public addUser: User ==> ()
 	addUser(user) == users := users union {user}
 	pre user not in set users
 	post users = users~ union {user};
 	
-	-- add a new group message
+
 	public sendMsg: User * Message ==> ()
 	sendMsg(user, msg) == msgs := msgs ^ [msg]
 	pre user in set users
 	post msgs = msgs~ ^ [msg];
 
-	-- remove a user from the group (but not its messages)
+
 	public removeUser: User ==> ()
 	removeUser(user) == users := users \ {user}
-	pre user in set users and card users > 1
+	pre user in set users and
+			card users > 1
 	post users = users~ \ {user};
 	
-	-- check messages from the group (the user must be in the group)
+
 	public pure checkMsgs: User ==> seq of Message
 	checkMsgs(user) == return msgs
 	pre user in set users;
